@@ -6,84 +6,96 @@
 <title>Chemistry 121 — Copy-on-Double-Click</title>
 <style>
   :root{
-    --bg:#0b1020; --panel:#0f1733; --ink:#e8ecff; --muted:#a9b3d1; --accent:#8bb2ff; --accent2:#6ee7b7;
+    --bg:#0b1020; --panel:#0f1733; --ink:#e8ecff; --muted:#a9b3d1;
+    --accent:#8bb2ff; --accent2:#6ee7b7;
     --ring: rgba(139,178,255,.25); --hover: rgba(139,178,255,.08); --copied: rgba(110,231,183,.18);
     --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans";
   }
-  * { box-sizing:border-box }
-  html,body { height:100% }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
   body{
-    margin:0; color:var(--ink); background: radial-gradient(1200px 800px at 10% -10%, #1b2452 0%, #0b1020 40%, #050815 100%);
-    font-family: var(--sans); line-height:1.5;
+    margin:0; color:var(--ink);
+    background: radial-gradient(1200px 800px at 10% -10%, #1b2452 0%, #0b1020 40%, #050815 100%);
+    font-family:var(--sans); line-height:1.5;
   }
-  .wrap{ max-width: 1100px; margin: clamp(16px,3vw,32px) auto; padding: clamp(16px,3vw,32px); background: color-mix(in oklab, var(--panel) 92%, black 8%);
-         border:1px solid rgba(255,255,255,.06); border-radius:16px; box-shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04);}
-  header h1{ margin:0 0 8px; font-size: clamp(22px, 3.2vw, 36px); letter-spacing:.2px }
-  header p{ margin:.25rem 0 1rem; color:var(--muted) }
-  hr { border:0; height:1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent); margin: 20px 0;}
-  /* Copyable target styling */
+
+  .wrap{
+    max-width:1100px; margin:clamp(16px,3vw,32px) auto;
+    padding:clamp(16px,3vw,32px);
+    background:color-mix(in oklab, var(--panel) 92%, black 8%);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04);
+  }
+
+  header h1{margin:0 0 8px; font-size:clamp(22px, 3.2vw, 36px); letter-spacing:.2px}
+  header p{margin:.25rem 0 1rem; color:var(--muted)}
+  hr{border:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);margin:20px 0;}
+
   [data-copyable]{
-    position:relative; border-radius:10px; padding: .15rem .4rem; margin-left: -.4rem; margin-right: -.4rem;
-    transition: background .12s ease, box-shadow .12s ease, transform .05s ease;
-    cursor: copy;
+    position:relative;border-radius:10px;padding:.15rem .4rem;margin-left:-.4rem;margin-right:-.4rem;
+    transition:background .12s ease,box-shadow .12s ease,transform .05s ease;cursor:copy;
   }
-  [data-copyable]:hover{ background: var(--hover); box-shadow: 0 0 0 3px var(--ring); }
-  [data-copyable].copied{ background: var(--copied); outline: 2px solid rgba(110,231,183,.5); }
-  .legend{ font: 12px/1.4 var(--mono); color:var(--muted); margin-top:.5rem }
-  ul{ margin:.2rem 0 .75rem 1.25rem; padding:0 }
-  li{ margin:.15rem 0 }
+  [data-copyable]:hover{background:var(--hover);box-shadow:0 0 0 3px var(--ring);}
+  [data-copyable].copied{background:var(--copied);outline:2px solid rgba(110,231,183,.5);}
+
+  /* Level-based colors */
+  #toc-root .lvl-1 > [data-copyable]{color:var(--accent); font-weight:600; font-size:1.05rem;}
+  #toc-root .lvl-2 > [data-copyable]{color:var(--accent2);}
+  #toc-root .lvl-3 > [data-copyable],
+  #toc-root .lvl-4 > [data-copyable],
+  #toc-root .lvl-5 > [data-copyable]{color:var(--ink);}
+
+  ul{margin:.2rem 0 .75rem 1.25rem;padding:0}
+  li{margin:.15rem 0}
+  .legend{font:12px/1.4 var(--mono); color:var(--muted); margin-top:.5rem}
+
   .toast{
-    position: fixed; top: 14px; right: 14px; background: #0a1b12; color:#d5ffe9; border:1px solid rgba(110,231,183,.4);
-    padding:10px 12px; border-radius:10px; font-size:14px; display:none; box-shadow: 0 10px 24px rgba(0,0,0,.35);
+    position:fixed;top:14px;right:14px;background:#0a1b12;color:#d5ffe9;
+    border:1px solid rgba(110,231,183,.4);padding:10px 12px;border-radius:10px;
+    font-size:14px;display:none;box-shadow:0 10px 24px rgba(0,0,0,.35);
   }
-  .kbd{ font: 11px/1 var(--mono); background: rgba(255,255,255,.08); padding:2px 6px; border-radius:6px; border:1px solid rgba(255,255,255,.14) }
+  .kbd{font:11px/1 var(--mono);background:rgba(255,255,255,.08);
+       padding:2px 6px;border-radius:6px;border:1px solid rgba(255,255,255,.14);}
 </style>
 </head>
 <body>
-  <div class="wrap" id="content">
-    <header>
-      <h1 data-copyable>📘 Chemistry 121 — Table of Contents</h1>
-      <p class="legend">Tip: <span class="kbd">Double-click</span> any line to copy it.</p>
-    </header>
-
-    <!-- Generated content will appear here -->
-    <section id="toc-root"></section>
-  </div>
-
-  <div id="toast" class="toast" role="status" aria-live="polite">Copied ✔</div>
+<div class="wrap" id="content">
+  <header>
+    <h1 data-copyable>📘 Chemistry 121 — Table of Contents</h1>
+    <p class="legend">Tip: <span class="kbd">Double-click</span> any line to copy it.</p>
+  </header>
+  <section id="toc-root"></section>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite">Copied ✔</div>
 
 <script>
-/** 1) Paste your outline here as a single string. Indentation controls nesting (2 spaces per level). */
+
 const tocText = `
 * 1 Why Study Chemistry? (page 1.1)
-
   * 1.1 Course Content (page 1.2)
   * 1.2 Programs in Chemistry (page 1.3)
   * 1.3 How to Use this Book (page 1.5)
   * 1.4 How to Learn Chemistry (page 1.6)
-
     * 1.4.1 Strategies for Reading this Workbook (page 1.6)
     * 1.4.2 Strategies for Learning from Practice Problems (page 1.6)
     * 1.4.3 Strategies for Studying for Exams (page 1.7)
   * 1.5 How to Get Help with Course Material (page 1.8)
-
     * 1.5.1 Instructor Office Hours (page 1.8)
     * 1.5.2 Course Canvas Site (page 1.8)
     * 1.5.3 Chemistry Resource Centre (page 1.8)
 
 * 2 Chemical Bonding and Lewis Structures (page 2.1)
-
   * 2.1 Learning Objectives (page 2.1)
   * 2.2 Chemical Bonding (page 2.3)
-
     * 2.2.1 Ionic Compounds (page 2.5)
     * 2.2.2 Covalent Bonding and Lewis Structures of Diatomic Molecules (page 2.7)
     * 2.2.3 Bond Order and Bond Length (page 2.8)
     * 2.2.4 Polar Covalent Bonds (page 2.11)
     * 2.2.5 Percent Ionic Character (page 2.12)
   * 2.3 Lewis Structures of Polyatomic Species (page 2.13)
-
     * 2.3.1 Octet Rule (page 2.14)
     * 2.3.2 Formal Charge (page 2.16)
     * 2.3.3 Drawing Lewis Structures for More Complicated Species (page 2.25)
@@ -91,7 +103,6 @@ const tocText = `
   * 2.4 Comparison: Formal Charge, Oxidation State, and Partial Charge (page 2.39)
 
 * 3 Shapes and Polarity of Chemical Species (page 3.1)
-
   * 3.1 Learning Objectives (page 3.1)
   * 3.2 Molecular Shape (page 3.2)
   * 3.3 How to Determine Molecular Shape Using the VSEPR Model (page 3.3)
@@ -101,7 +112,6 @@ const tocText = `
   * 3.7 How Do Chemists Determine the Structure of a New Molecule? (page 3.25)
 
 * 4 Fundamentals of Quantum Mechanics (page 4.1)
-
   * 4.1 Wave-like Properties of Matter (page 4.3)
   * 4.2 Wave Concepts (page 4.8)
   * 4.3 Transverse Wave Characteristics (page 4.9)
@@ -118,12 +128,10 @@ const tocText = `
   * 4.14 Review of Important Quantum Mechanics Concepts (page 4.28)
 
 * 5 Electronic Structure of Atoms and Ions (page 5.1)
-
   * 5.1 Learning Objectives (page 5.1)
   * 5.2 One-electron Atoms and Ions (page 5.2)
   * 5.3 Mid-point Summary (page 5.6)
   * 5.4 Shapes of s, p, and d Orbitals (page 5.7)
-
     * 5.4.1 s Orbitals (page 5.9)
     * 5.4.2 p Orbitals (page 5.13)
     * 5.4.3 d Orbitals (page 5.16)
@@ -131,7 +139,6 @@ const tocText = `
   * 5.6 Summary (page 5.21)
 
 * 6 Interactions Between Light and Matter (page 6.1)
-
   * 6.1 Learning Objectives (page 6.2)
   * 6.2 The Nature of Light (page 6.3)
   * 6.3 The Electromagnetic Spectrum (page 6.6)
@@ -143,7 +150,6 @@ const tocText = `
   * 6.9 Atomic Spectroscopy (page 6.15)
 
 * 7 Multi-electron Species and Periodic Properties (page 7.1)
-
   * 7.1 Learning Objectives (page 7.1)
   * 7.2 Multi-electron Atoms and Ions (page 7.2)
   * 7.3 Effective Nuclear Charge (page 7.4)
@@ -152,13 +158,11 @@ const tocText = `
   * 7.6 General Procedure for Writing Electronic Configurations (page 7.7)
   * 7.7 Magnetic Properties (page 7.12)
   * 7.8 Periodic Properties (page 7.13)
-
     * 7.8.1 Atomic and Ionic Radii (page 7.13)
     * 7.8.2 Ionization Energy (page 7.15)
     * 7.8.3 Electron Affinity (EA) (page 7.19)
 
 * 8 Molecular Orbital Theory (page 8.1)
-
   * 8.1 Learning Objectives (page 8.1)
   * 8.2 Why MO Theory and VBT Are Needed (page 8.2)
   * 8.3 Limitations of Lewis and VSEPR Theories (page 8.2)
@@ -168,29 +172,24 @@ const tocText = `
   * 8.7 Energy Levels of MOs in Hydrogen (page 8.9)
   * 8.8 Procedure for Filling MO Diagrams (page 8.12)
   * 8.9 Molecular Orbitals of Second-Row Homonuclear Diatomic Species (page 8.14)
-
     * 8.9.1 Molecular Orbitals of Dilithium (Li₂) (page 8.15)
     * 8.9.2 Molecular Orbitals of Dioxygen (O₂) (page 8.16)
 
 * 9 Valence Bond Theory (page 9.1)
-
   * 9.1 Learning Objectives (page 9.1)
   * 9.2 Valence Bond Theory (page 9.2)
   * 9.3 Hybridization (page 9.5)
   * 9.4 Examples Illustrating Consequences of Hybridization (page 9.13)
 
 * 10 Conjugation and Colour (page 10.1)
-
   * 10.1 Learning Objectives (page 10.1)
   * 10.2 Introduction (page 10.2)
   * 10.3 Definition of Conjugation (page 10.3)
   * 10.4 Consequences of π Conjugated Systems (page 10.3)
   * 10.5 Understanding the Bonding of 1,3-Butadiene (page 10.6)
-
     * 10.5.1 Building the MOs of 1,3-Butadiene (page 10.6)
     * 10.5.2 Using Particle-in-a-Box Model (page 10.13)
   * 10.6 Chemical Origins of Colour (page 10.17)
-
     * 10.6.1 Colour Vision (page 10.17)
     * 10.6.2 Subtractive Colour Theory (page 10.19)
     * 10.6.3 Determining the Colour of Extended π Systems (page 10.20)
@@ -201,25 +200,20 @@ const tocText = `
   * 10.10 Condensed Structures (page 10.31)
 
 * 11 Properties of Molecules and Macromolecules (page 11.1)
-
   * 11.1 Learning Objectives (page 11.2)
   * 11.2 Physical Properties (page 11.3)
-
     * 11.2.1 Boiling and Melting (page 11.3)
     * 11.2.2 Solubility (page 11.4)
     * 11.2.3 Interatomic and Intermolecular Forces (page 11.5)
   * 11.3 Types of Solids (page 11.12)
-
     * 11.3.1 Ionic Solids (page 11.12)
     * 11.3.2 Molecular Solids (page 11.15)
     * 11.3.3 Network Covalent Solids (page 11.15)
   * 11.4 Examples of Solids (page 11.15)
   * 11.5 Polymers (page 11.21)
-
     * 11.5.1 Linear, Branched, and Crosslinked Polymers (page 11.23)
     * 11.5.2 Silicone: Preparation of Silicones (page 11.28)
   * 11.6 Sustainability: Environmental Issues Related to Polymers (page 11.31)
-
     * 11.6.1 Feedstock Issues (page 11.31)
     * 11.6.2 Polymer Recycling (page 11.31)
     * 11.6.3 Polymers and Pollution (page 11.33)
@@ -228,142 +222,83 @@ const tocText = `
     * 11.6.6 Nucleic Acids (page 11.34)
 
 * 12 Chemistry and Society: Chemicals in Our World (page 12.1)
-
   * 12.1 Learning Objectives (page 12.1)
   * 12.2 Natural vs. Synthetic Chemicals (page 12.2)
-
     * 12.2.1 Organic Farming (page 12.3)
     * 12.2.2 Toxicity (page 12.4)
   * 12.3 Pharmaceutical Drug Development (page 12.7)
-
     * 12.3.1 Drug Discovery Process (page 12.7)
     * 12.3.2 Mode of Action of Drugs (page 12.10)
   * 12.4 Chemistry and Sustainability (page 12.12)
-
     * 12.4.1 Life-Cycle Assessment (page 12.12)
     * 12.4.2 Green Chemistry (page 12.14)
   * 12.5 What Do Chemists Do? (page 12.16)
-
     * 12.5.1 Why Choose a Degree in Chemistry? (page 12.17)
-
 `;
 
-/** 2) Parse the text into a tree (2 spaces = one level). */
+
 function parseTOC(text){
-  // Accept bullets that start with "*", "-", or "•"
-  const lines = text
-    .split('\n')
-    .map(l => l.replace(/\r/g,''))
-    .filter(l => /^\s*[*\-•]\s+/.test(l));
-
-  const root = { children: [] };
-  const stack = [ {node: root, level: -1} ];
-
+  const lines = text.split('\n').map(l=>l.replace(/\r/g,'')).filter(l=>/^\s*[*\-•]\s+/.test(l));
+  const root = {children:[]}; const stack=[{node:root,level:-1}];
   for(const raw of lines){
-    // Allow decimal page numbers like 1.1, 8.15, 10.6.4, etc.
     const m = raw.match(/^(\s*)[*\-•]\s*(.+?)\s*\(page\s*([0-9]+(?:\.[0-9]+)*)\)\s*$/i);
     if(!m) continue;
-
-    const spaces = m[1].length;
-    const level = Math.floor(spaces/2); // 2 spaces per indent level
-    const title = m[2].trim();
-    const page = m[3].trim(); // keep as string to preserve decimals like "1.1"
-
-    while(stack.length && stack[stack.length-1].level >= level){
-      stack.pop();
-    }
-    const parent = stack[stack.length-1].node;
-    const node = { title, page, children: [] };
-    parent.children.push(node);
-    stack.push({node, level});
+    const level = Math.floor(m[1].length/2);
+    const node = {title:m[2].trim(), page:m[3].trim(), children:[]};
+    while(stack.length && stack[stack.length-1].level >= level) stack.pop();
+    stack[stack.length-1].node.children.push(node);
+    stack.push({node,level});
   }
   return root.children;
 }
 
-/** 3) Render the tree as nested ULs, with each line copyable. */
-function renderTOC(nodes){
-  const ul = document.createElement('ul');
+function renderTOC(nodes, level=1){
+  const ul=document.createElement('ul');
   for(const n of nodes){
-    const li = document.createElement('li');
-
-    // Only the label span is copyable, so we don't grab the whole subtree
-    const label = document.createElement('span');
-    label.dataset.copyable = '';
+    const li=document.createElement('li');
+    li.classList.add(`lvl-${level}`);
+    const label=document.createElement('span');
+    label.dataset.copyable='';
     label.setAttribute('tabindex','0');
     label.setAttribute('title','Double-click to copy');
-    label.textContent = `${n.title} (page ${n.page})`;
-
+    label.textContent=`${n.title} (page ${n.page})`;
     li.appendChild(label);
-
-    if(n.children && n.children.length){
-      li.appendChild(renderTOC(n.children));
-    }
+    if(n.children?.length) li.appendChild(renderTOC(n.children, level+1));
     ul.appendChild(li);
   }
-  return ul;     // <— you had this line but were missing the closing brace below
-}                // <— this closing brace was missing
+  return ul;
+}
 
-/** 4) Inject into the page. */
-const tocRoot = document.getElementById('toc-root');
-const tree = parseTOC(tocText);
-tocRoot.innerHTML = '<hr />';
-tocRoot.appendChild(renderTOC(tree));
-tocRoot.appendChild(document.createElement('hr'));
+const tocRoot=document.getElementById('toc-root');
+const tree=parseTOC(tocText);
+tocRoot.innerHTML='<hr />'; tocRoot.appendChild(renderTOC(tree)); tocRoot.appendChild(document.createElement('hr'));
 
-/** 5) Copy-on-double-click behavior. */
 (function(){
-  const container = document.getElementById('content');
-  const toast = document.getElementById('toast');
+  const container=document.getElementById('content');
+  const toast=document.getElementById('toast');
 
-  container.addEventListener('dblclick', async (ev) => {
-    const target = ev.target.closest('[data-copyable]');
-    if(!target) return;
-    const text = (target.innerText || target.textContent || "").replace(/\s+/g,' ').trim();
-    if(!text) return;
+  container.addEventListener('dblclick', async (ev)=>{
+    const target=ev.target.closest('[data-copyable]');
+    if(!target)return;
+    const text=(target.innerText||target.textContent||"").replace(/\s+/g,' ').trim();
+    if(!text)return;
+    try{await navigator.clipboard.writeText(text);}
+    catch{const ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch{}ta.remove();}
+    target.classList.add('copied');setTimeout(()=>target.classList.remove('copied'),650);
+    toast.textContent='Copied ✔';toast.style.display='block';toast.style.opacity='0';toast.style.transform='translateY(-6px)';
+    requestAnimationFrame(()=>{toast.style.transition='opacity .18s ease,transform .18s ease';toast.style.opacity='1';toast.style.transform='translateY(0)';});
+    clearTimeout(showToast?._t);showToast={_t:setTimeout(()=>{toast.style.opacity='0';toast.style.transform='translateY(-6px)';setTimeout(()=>{toast.style.display='none';},200);},1100)};
+  },{passive:true});
 
-    try{
-      await navigator.clipboard.writeText(text);
-    }catch(e){
-      const ta = document.createElement('textarea');
-      ta.value = text; document.body.appendChild(ta); ta.select();
-      try{ document.execCommand('copy'); }catch(_){}
-      ta.remove();
-    }
-
-    target.classList.add('copied');
-    setTimeout(()=> target.classList.remove('copied'), 650);
-    showToast('Copied ✔');
-  }, { passive:true });
-
-  function showToast(msg){
-    toast.textContent = msg;
-    toast.style.display = 'block';
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateY(-6px)';
-    requestAnimationFrame(()=>{
-      toast.style.transition = 'opacity .18s ease, transform .18s ease';
-      toast.style.opacity = '1';
-      toast.style.transform = 'translateY(0)';
-    });
-    clearTimeout(showToast._t);
-    showToast._t = setTimeout(()=>{
-      toast.style.opacity = '0';
-      toast.style.transform = 'translateY(-6px)';
-      setTimeout(()=>{ toast.style.display='none'; }, 200);
-    }, 1100);
-  }
-
-  // Keyboard accessibility (Enter to copy)
-  container.addEventListener('keydown', (ev)=>{
-    if(ev.key !== 'Enter') return;
-    const target = ev.target.closest('[data-copyable]');
-    if(!target) return;
+  container.addEventListener('keydown',(ev)=>{
+    if(ev.key!=='Enter')return;
+    const target=ev.target.closest('[data-copyable]');
+    if(!target)return;
     ev.preventDefault();
-    target.dispatchEvent(new MouseEvent('dblclick', {bubbles:true}));
+    target.dispatchEvent(new MouseEvent('dblclick',{bubbles:true}));
   });
 })();
 </script>
-
 </body>
 </html>
 
