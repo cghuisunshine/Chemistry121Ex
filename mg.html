@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Chemistry 121 – Multi-Grain Chapter Guide</title>
+<style>
+  :root{
+    --bg:#050815;
+    --panel:#0f1733;
+    --panel-soft:#111a3a;
+    --ink:#e8ecff;
+    --muted:#a9b3d1;
+    --accent:#8bb2ff;
+    --accent2:#6ee7b7;
+    --danger:#f97373;
+    --ring:rgba(139,178,255,.4);
+    --hover:rgba(139,178,255,.12);
+    --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+    --sans:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial,"Noto Sans";
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%; margin:0; padding:0;}
+  body{
+    background:radial-gradient(1100px 700px at 8% -8%,#1b2452 0%,#050815 42%,#020312 100%);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.5;
+  }
+
+  .shell{
+    max-width:1220px;
+    margin:clamp(12px,3vw,24px) auto;
+    padding:clamp(12px,3vw,24px);
+    background:color-mix(in oklab, var(--panel) 92%, black 8%);
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,.06);
+    box-shadow:0 14px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04);
+    display:flex;
+    gap:18px;
+    min-height:560px;
+  }
+
+  .sidebar{
+    width:260px;
+    flex-shrink:0;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+
+  .main{
+    flex:1;
+    min-width:0;
+    background:color-mix(in oklab, var(--panel-soft) 92%, black 8%);
+    border-radius:16px;
+    padding:18px 20px 20px;
+    border:1px solid rgba(255,255,255,.06);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+  }
+
+  header h1{
+    margin:0 0 4px;
+    font-size:clamp(20px,2.4vw,30px);
+  }
+  header p{
+    margin:0;
+    color:var(--muted);
+    font-size:13px;
+  }
+
+  .pill-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    margin-top:8px;
+  }
+  .pill{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    padding:3px 8px;
+    border-radius:999px;
+    border:1px solid rgba(139,178,255,.35);
+    color:var(--accent);
+    background:rgba(10,24,55,.6);
+  }
+
+  .chapter-list{
+    margin-top:10px;
+    padding:8px;
+    border-radius:14px;
+    background:rgba(3,9,35,.8);
+    border:1px solid rgba(255,255,255,.05);
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    max-height:520px;
+    overflow:auto;
+  }
+
+  .chapter-btn{
+    border:0;
+    background:transparent;
+    color:var(--muted);
+    text-align:left;
+    font-size:13px;
+    padding:7px 8px;
+    border-radius:10px;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    gap:1px;
+    transition:background .12s ease,color .12s ease,transform .05s ease, box-shadow .12s ease;
+  }
+  .chapter-btn span.code{
+    font-family:var(--mono);
+    font-size:11px;
+    opacity:.85;
+  }
+  .chapter-btn strong{
+    font-size:13px;
+    color:var(--ink);
+  }
+  .chapter-btn:hover{
+    background:var(--hover);
+    color:var(--ink);
+    box-shadow:0 0 0 1px var(--ring);
+  }
+  .chapter-btn.active{
+    background:linear-gradient(135deg, rgba(139,178,255,.16), rgba(110,231,183,.05));
+    box-shadow:0 0 0 1px var(--ring),0 10px 25px rgba(0,0,0,.45);
+    color:var(--ink);
+    transform:translateY(-1px);
+  }
+
+  .chapter-meta{
+    font-size:11px;
+    color:var(--muted);
+    margin-top:6px;
+  }
+
+  .section{
+    margin-top:12px;
+    padding-top:8px;
+    border-top:1px solid rgba(255,255,255,.06);
+  }
+  .section:first-of-type{
+    border-top:none;
+    margin-top:6px;
+    padding-top:2px;
+  }
+
+  .section h2{
+    margin:0 0 6px;
+    font-size:15px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .section h2 span.tag{
+    font-size:11px;
+    padding:2px 7px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.12);
+    color:var(--muted);
+  }
+  .section h2 .emoji{
+    font-size:15px;
+  }
+
+  .block{
+    font-size:13px;
+    color:var(--muted);
+  }
+  .block p{
+    margin:2px 0 8px;
+  }
+
+  ul{
+    margin:4px 0 8px 1.1rem;
+    padding:0;
+  }
+  li{
+    margin:2px 0;
+  }
+
+  code{
+    font-family:var(--mono);
+    font-size:12px;
+    padding:1px 4px;
+    border-radius:6px;
+    background:rgba(15,23,42,.9);
+    border:1px solid rgba(148,163,184,.45);
+  }
+
+  .formula-grid{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:3px;
+  }
+  .formula-line{
+    font-family:var(--mono);
+    font-size:12px;
+    background:rgba(15,23,42,.9);
+    border-radius:8px;
+    padding:5px 7px;
+    border:1px solid rgba(148,163,184,.45);
+    display:flex;
+    justify-content:space-between;
+    gap:8px;
+  }
+  .formula-line span.label{
+    color:var(--muted);
+    font-size:11px;
+  }
+
+  /* Copy-on-double-click styling */
+  [data-copyable]{
+    position:relative;
+    border-radius:8px;
+    padding:1px 3px;
+    margin-left:-3px;
+    margin-right:-3px;
+    cursor:copy;
+    transition:background .12s ease, box-shadow .12s ease, transform .05s ease;
+  }
+  [data-copyable]:hover{
+    background:var(--hover);
+    box-shadow:0 0 0 2px var(--ring);
+  }
+  [data-copyable].copied{
+    background:rgba(110,231,183,.18);
+    box-shadow:0 0 0 2px rgba(110,231,183,.45);
+  }
+
+  .kbd{
+    font:11px/1 var(--mono);
+    background:rgba(255,255,255,.08);
+    padding:2px 6px;
+    border-radius:6px;
+    border:1px solid rgba(255,255,255,.14);
+  }
+
+  .toast{
+    position:fixed;
+    top:14px;
+    right:14px;
+    background:#0a1b12;
+    color:#d5ffe9;
+    border:1px solid rgba(110,231,183,.4);
+    padding:10px 12px;
+    border-radius:10px;
+    font-size:14px;
+    display:none;
+    box-shadow:0 10px 24px rgba(0,0,0,.35);
+    z-index:50;
+  }
+
+  @media (max-width:860px){
+    .shell{
+      flex-direction:column;
+    }
+    .sidebar{
+      width:100%;
+    }
+    .chapter-list{
+      max-height:200px;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="shell" id="content-root">
+  <aside class="sidebar">
+    <header>
+      <h1>Chem 121 – Chapters</h1>
+      <p>Click a chapter, then <span class="kbd">double-click</span> any line to copy it.</p>
+      <div class="pill-row">
+        <div class="pill">Large → Medium → Micro Grain</div>
+      </div>
+    </header>
+    <div class="chapter-list" id="chapter-list"></div>
+    <div class="chapter-meta">
+      Tip: skim the <b>Big Picture</b> first, then <b>Key Concepts</b>, then dip into <b>Deeper Theory</b> as needed.
+    </div>
+  </aside>
+
+  <main class="main" id="chapter-content">
+    <!-- JS will inject chapter content here -->
+  </main>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite">Copied ✔</div>
+
+<script>
+const chapters = [
+  {
+    id: "ch1",
+    short: "Ch 1",
+    code: "1.1–1.8",
+    title: "Why Study Chemistry? & How to Learn It",
+    bigPicture: [
+      "Chemistry is the study of matter and energy at the particle level, and it underlies biology, physics, earth science, and technology.",
+      "Chem 121 is not just facts; it is training your brain to think in models, symbols, and approximations.",
+      "How you study (habits, practice, feedback) matters as much as what you study."
+    ],
+    keyConcepts: [
+      "Role of Chemistry — Chemistry links microscopic particles (atoms, ions, molecules) to macroscopic observations (colour, temperature, phase, reactivity).",
+      "Course Content — Chem 121 focuses on structure and bonding: quantum theory, orbitals, bonding models, and macromolecular properties.",
+      "Programs in Chemistry — A chemistry background appears in medicine, engineering, materials, environmental science, and more.",
+      "Active Reading — Reading a chemistry workbook means pausing to annotate, summarize, and attempt examples, not just scrolling through text.",
+      "Practice Problems — Learning happens when you attempt problems before seeing the solution, then compare and correct.",
+      "Study for Exams — Spread practice over time (spacing), mix topics (interleaving), and simulate exam conditions to test retrieval.",
+      "Getting Help — Office hours, resource centres, and study groups help you debug your understanding, not just “check answers”."
+    ],
+    deeperTheory: [
+      "Chemistry as a Model-Building Science — Real systems are too complex to describe exactly; chemists build and test simple models (ideal gas, Lewis structures, MO diagrams) that capture the most important features.",
+      "Representation Layers — A single situation can be described in words, formulas, particle diagrams, energy diagrams, and graphs; fluency means moving between layers.",
+      "Cognitive Load — Complex problems overload working memory; good notes, chunked steps, and patterns (like algorithmic Lewis rules) reduce mental load.",
+      "Metacognition — Regularly asking “Do I really understand this, or am I just following steps?” improves long-term performance more than raw hours."
+    ],
+    skills: [
+      "Translate between verbal descriptions and symbolic chemical language.",
+      "Plan a study schedule that revisits topics multiple times before the exam.",
+      "Use practice problems as feedback: what do my errors have in common?"
+    ],
+    formulas: []
+  },
+  {
+    id: "ch2",
+    short: "Ch 2",
+    code: "2.1–2.39",
+    title: "Chemical Bonding and Lewis Structures",
+    bigPicture: [
+      "Bonding is about how electrons are shared or transferred between atoms to lower their total energy.",
+      "Lewis structures are a bookkeeping model for valence electrons that help predict bonding, charge distribution, and connectivity.",
+      "Formal charge, oxidation state, and partial charge are different bookkeeping schemes for the same electron distribution story."
+    ],
+    keyConcepts: [
+      "Ionic vs Covalent Bonding — Ionic: electron transfer and electrostatic attraction between ions (e.g., NaCl). Covalent: sharing of electron pairs between nuclei (e.g., H₂O).",
+      "Octet Rule — Main-group atoms tend to gain, lose, or share electrons to reach 8 valence electrons (H, He use duet). There are exceptions (odd-electron species, expanded octets, electron-deficient species).",
+      "Bond Order — Roughly “number of bonding pairs” between two atoms: higher bond order → shorter and stronger bonds.",
+      "Bond Polarity — When electronegativities differ, electrons are pulled more towards one atom, giving a polar covalent bond with partial charges δ⁺/δ⁻.",
+      "Percent Ionic Character — Measures how ionic vs covalent a bond is, based on electronegativity difference and experimental data.",
+      "Lewis Structures — Count valence electrons, connect atoms with single bonds, complete octets with lone pairs, then adjust with multiple bonds as needed.",
+      "Formal Charge — FC = valence e⁻ – (nonbonding e⁻ + ½ bonding e⁻); helps choose the most reasonable Lewis structure.",
+      "Resonance — When more than one valid Lewis structure exists, the real molecule is a resonance hybrid with delocalized electrons.",
+      "Oxidation State vs Formal Charge — Oxidation state assumes completely ionic bonds; formal charge assumes perfectly covalent sharing."
+    ],
+    deeperTheory: [
+      "Energy Perspective — Bond formation releases energy because shared electron density between nuclei lowers potential energy relative to separated atoms.",
+      "Electronegativity & QM — Electronegativity differences reflect how strongly an atom’s nucleus attracts electron density in a shared orbital.",
+      "Resonance and Delocalization — In QM, electrons occupy delocalized molecular orbitals; resonance structures are classical cartoons of this delocalization.",
+      "Partial Charges — Real charge distributions are continuous and can be estimated by quantum calculations; partial charges connect to dipole moments and reactivity.",
+      "Limitations of Lewis — Lewis structures cannot show orbital shapes, nodal patterns, or detailed electronic excited states."
+    ],
+    skills: [
+      "Draw Lewis structures systematically for neutral molecules and ions.",
+      "Assign formal charges and pick the best structure using FC and electronegativity.",
+      "Recognize resonance and draw contributing structures.",
+      "Estimate relative bond length/strength from bond order and polarity."
+    ],
+    formulas: [
+      { expr: "Formal charge:  FC = V - (N + B/2)", label: "V = valence e⁻; N = nonbonding e⁻; B = bonding e⁻" },
+      { expr: "Bond order (simple Lewis): (number of bonding pairs between 2 atoms)", label: "" }
+    ]
+  },
+  {
+    id: "ch3",
+    short: "Ch 3",
+    code: "3.1–3.25",
+    title: "Shapes and Polarity of Chemical Species (VSEPR)",
+    bigPicture: [
+      "3D molecular shape controls polarity, intermolecular forces, and reactivity.",
+      "VSEPR treats electron pairs as charge clouds that repel and arrange to minimize repulsion.",
+      "Molecular polarity combines individual bond dipoles with 3D geometry."
+    ],
+    keyConcepts: [
+      "Electron Domains — A domain is a region of electron density around a central atom: single, double, triple bonds and lone pairs each count as one domain.",
+      "Parent Shape — The arrangement of all domains (bonding + lone pairs) gives the parent geometry (e.g., tetrahedral, trigonal bipyramidal).",
+      "Molecular Shape — Ignore lone pairs and describe the arrangement of atoms (e.g., bent, trigonal pyramidal, see-saw).",
+      "Bond Angles — Ideal angles (e.g., 109.5° for tetrahedral) are modified by lone pairs and multiple bonds (lone pairs compress angles).",
+      "Polarity — A molecule is polar if its vector sum of bond dipoles ≠ 0; shape can cancel or enhance dipoles.",
+      "Shapes of Larger Molecules — Consider local VSEPR around each central atom (e.g., in organic molecules).",
+      "Experimental Structure Determination — Techniques like X-ray crystallography and spectroscopy validate structural models."
+    ],
+    deeperTheory: [
+      "Electron Density Clouds — In QM, regions of high electron density repel via Coulomb forces; VSEPR is a simplified picture of this.",
+      "Lone Pairs vs Bonding Pairs — Lone pairs are more localized to one nucleus and often occupy more space, causing stronger repulsions.",
+      "Multiple Bonds — Double/triple bonds have greater electron density between nuclei and exert more repulsion than single bonds.",
+      "Connection to Hybridization — VSEPR geometries often align with hybrid orbital sets (sp, sp², sp³, etc.), linking VBT to geometry."
+    ],
+    skills: [
+      "Count electron domains and identify parent geometry.",
+      "Determine molecular shape and predict approximate bond angles.",
+      "Predict whether a molecule is polar or non-polar based on shape and bond dipoles."
+    ],
+    formulas: []
+  },
+  {
+    id: "ch4",
+    short: "Ch 4",
+    code: "4.1–4.28",
+    title: "Fundamentals of Quantum Mechanics",
+    bigPicture: [
+      "Particles like electrons show wave-like behaviour; their allowed states are standing waves with quantized energies.",
+      "Quantum mechanics replaces exact trajectories with wavefunctions that give probability distributions.",
+      "Simple models like the particle-in-a-box show how boundary conditions lead to energy quantization and nodes."
+    ],
+    keyConcepts: [
+      "Wave Concepts — Amplitude, wavelength λ, frequency ν, and phase describe classical waves.",
+      "Transverse Waves & Standing Waves — Standing waves on strings and in boxes are analogies for quantized states.",
+      "Probability Interpretation — |ψ(x)|² gives the probability density of finding a particle at position x.",
+      "Heisenberg Uncertainty Principle — There is a fundamental limit to the simultaneous precision of position and momentum.",
+      "Schrödinger Equation — A differential equation whose solutions ψ and energies E describe allowed quantum states.",
+      "Particle-in-a-Box — A simple 1D model with infinite walls giving discrete energies and sinusoidal wavefunctions.",
+      "Energy Quantization — Only certain energies are allowed, associated with whole numbers of half-wavelengths fitting into the “box”.",
+      "Superposition — A general state can be a linear combination of stationary states; probabilities come from |Σ cₙ ψₙ|²."
+    ],
+    deeperTheory: [
+      "Conjugate Variables — Position x and momentum p are conjugate: their operators do not commute; this yields the uncertainty relation.",
+      "Nodes — Points where ψ = 0 arise from destructive interference; more nodes generally mean higher energy.",
+      "Orthogonality — Different stationary states are orthogonal: their inner product is zero; this simplifies expansions.",
+      "Time Evolution — Stationary states only gain a phase factor in time; superpositions change probability distributions in time.",
+      "QM vs Classical — Quantum systems recover classical behaviour in the large-quantum-number limit (correspondence principle)."
+    ],
+    skills: [
+      "Relate standing waves on a string to quantized energy levels.",
+      "Count nodes in simple wavefunctions and connect them to quantum numbers.",
+      "Explain qualitatively what |ψ|² means and why probability is spread out.",
+      "Use analogies (box, string, pipe) to reason about quantum allowed states."
+    ],
+    formulas: [
+      { expr: "Heisenberg:  Δx · Δp ≥ ħ/2", label: "" },
+      { expr: "Particle in a box energies:  Eₙ = n² h² / (8 m L²)", label: "n = 1,2,3,…" }
+    ]
+  },
+  {
+    id: "ch5",
+    short: "Ch 5",
+    code: "5.1–5.21",
+    title: "Electronic Structure of Atoms and Ions (One-Electron Systems)",
+    bigPicture: [
+      "Quantum numbers (n, l, m) naturally arise when solving the Schrödinger equation for hydrogen-like atoms.",
+      "Atomic orbitals (s, p, d, …) are standing-wave solutions with characteristic shapes and node patterns.",
+      "Energetics in hydrogenic ions depend only on n; degeneracy is lifted in multi-electron atoms."
+    ],
+    keyConcepts: [
+      "Hydrogen-like Species — Atoms/ions with one electron (H, He⁺, Li²⁺) can be solved exactly.",
+      "Quantum Numbers — n (principal), l (angular momentum), m (magnetic); they label energies and shapes of orbitals.",
+      "Radial vs Angular Parts — ψ(r,θ,φ) splits into radial Rₙ,ₗ(r) and angular Yₗᵐ(θ,φ) parts.",
+      "s, p, d Orbitals — l = 0 → s (spherical); l = 1 → p (dumbbell); l = 2 → d (clover, donut shapes).",
+      "Nodes — Total nodes = n − 1; angular nodes = l; radial nodes = n − l − 1.",
+      "Energy Levels — For hydrogen-like systems, E depends only on n and nuclear charge Z.",
+      "Mid-Point Summaries — Help check qualitative understanding of orbitals and energy patterns."
+    ],
+    deeperTheory: [
+      "Separation of Variables — In spherical coordinates, Schrödinger’s equation separates, giving spherical harmonics and radial equations.",
+      "Legendre Polynomials & Spherical Harmonics — Angular parts Yₗᵐ(θ,φ) encode orbital shape and orientation.",
+      "Degeneracy — For hydrogen, all orbitals with the same n have the same energy; higher symmetry leads to degeneracy.",
+      "Z-Dependence — Energies scale with Z² for hydrogen-like ions, making inner electrons much more tightly bound.",
+      "Visualization — Orbital pictures show surfaces of constant |ψ|²; they are probability “cloud” boundaries, not hard shells."
+    ],
+    skills: [
+      "Assign n, l, m values to specific orbitals (e.g., 3d, 4p).",
+      "Count radial and angular nodes for a given orbital.",
+      "Recognize and sketch basic s, p, and d orbital shapes.",
+      "Explain qualitatively why energies depend on n and Z for hydrogen-like ions."
+    ],
+    formulas: [
+      { expr: "Total nodes = n − 1", label: "" },
+      { expr: "Angular nodes = l ;  Radial nodes = n − l − 1", label: "" },
+      { expr: "Hydrogen-like energies:  Eₙ = −(Z² R_H) / n²", label: "R_H = Rydberg constant" }
+    ]
+  },
+  {
+    id: "ch6",
+    short: "Ch 6",
+    code: "6.1–6.15",
+    title: "Interactions Between Light and Matter",
+    bigPicture: [
+      "Light behaves as both a wave and a stream of photons; different models are useful in different contexts.",
+      "Electronic transitions correspond to absorption or emission of photons with specific energies.",
+      "Spectroscopy uses the interaction of light with matter to probe energy levels and structure."
+    ],
+    keyConcepts: [
+      "Nature of Light — Electromagnetic waves characterized by wavelength λ, frequency ν, and speed c.",
+      "Electromagnetic Spectrum — Ranges from radio to gamma; different regions probe different processes.",
+      "Wave–Particle Duality — Light shows interference and diffraction (wave) and also comes in photons (particle).",
+      "Photoelectric Effect — Electrons are ejected from a metal when photon energy exceeds the work function.",
+      "Photon Energy — E = hν = hc/λ links wavelength to energy.",
+      "Absorption & Emission — Atoms/molecules absorb photons to move to excited states and emit when they relax.",
+      "Atomic Spectra — Line spectra correspond to discrete electronic transitions between quantized energy levels."
+    ],
+    deeperTheory: [
+      "Energy Quantization and Spectra — Allowed energy levels give discrete ΔE, so only certain λ appear in emission/absorption.",
+      "Einstein’s Photon Hypothesis — Explains threshold frequency in the photoelectric effect: below ν₀, no electrons regardless of intensity.",
+      "Selection Rules — Not all transitions are allowed; symmetry and angular momentum conservation restrict transitions.",
+      "Spectroscopy as a Probe — Measuring λ and intensity of spectral lines reveals energy level spacings and populations."
+    ],
+    skills: [
+      "Relate λ, ν, and E for photons: shorter wavelength → higher energy.",
+      "Explain the photoelectric effect qualitatively and apply threshold concepts.",
+      "Interpret simple line spectra in terms of electronic transitions."
+    ],
+    formulas: [
+      { expr: "c = λν", label: "Speed of light relationship" },
+      { expr: "E = hν = hc/λ", label: "Photon energy" },
+      { expr: "Photoelectric:  KE_max = hν − Φ", label: "Φ = work function" }
+    ]
+  },
+  {
+    id: "ch7",
+    short: "Ch 7",
+    code: "7.1–7.19",
+    title: "Multi-Electron Species and Periodic Properties",
+    bigPicture: [
+      "In multi-electron atoms, electron–electron repulsions and shielding modify orbital energies.",
+      "Effective nuclear charge Z_eff explains periodic trends in size, ionization energy, and electron affinity.",
+      "Electron configuration patterns produce the structure of the periodic table."
+    ],
+    keyConcepts: [
+      "Shielding & Penetration — Inner electrons shield outer electrons from the full nuclear charge; some orbitals penetrate closer to the nucleus.",
+      "Effective Nuclear Charge — Z_eff ~ Z − S, where S is shielding; higher Z_eff pulls electrons closer.",
+      "Spin Quantum Number — Electrons have spin ±½; Pauli principle forbids identical sets of quantum numbers.",
+      "Electron Configuration — Aufbau principle, Pauli exclusion, and Hund’s rule guide filling of orbitals.",
+      "Magnetism — Paired electrons → diamagnetic; unpaired → paramagnetic.",
+      "Atomic/Ionic Radii — Sizes vary periodically: decrease across a period, increase down a group; cations smaller, anions larger.",
+      "Ionization Energy (IE) — Energy required to remove an electron; relates to how strongly electrons are held.",
+      "Electron Affinity (EA) — Energy change when an atom gains an electron; trends relate to stability of resulting anion."
+    ],
+    deeperTheory: [
+      "Orbital Energy Splitting — In multi-electron atoms, s orbitals penetrate more and experience higher Z_eff than p, d, f of the same n.",
+      "Exceptions in Configurations — Anomalies (e.g., Cr, Cu) arise when half-filled or filled subshells lower energy due to symmetry and exchange.",
+      "Origin of Periodic Trends — Competing effects of increasing Z, shielding, and electron–electron repulsion shape observed patterns.",
+      "Magnetism from MO/VBT — Unpaired spins in particular orbitals explain observed paramagnetism and bond properties."
+    ],
+    skills: [
+      "Write ground-state electron configurations, including for ions.",
+      "Predict paramagnetic vs diamagnetic behaviour from configurations.",
+      "Explain and sketch trends in atomic radii, IE, and EA across periods and down groups."
+    ],
+    formulas: []
+  },
+  {
+    id: "ch8",
+    short: "Ch 8",
+    code: "8.1–8.16",
+    title: "Molecular Orbital (MO) Theory",
+    bigPicture: [
+      "MO theory treats electrons as occupying orbitals that extend over the entire molecule, not just between pairs of atoms.",
+      "Constructive and destructive interference of atomic orbitals produce bonding and antibonding MOs.",
+      "MO diagrams predict bond order, magnetism, and relative stability better than Lewis/VSEPR alone."
+    ],
+    keyConcepts: [
+      "Need for MO Theory — Lewis and VBT struggle with delocalization, excited states, and magnetic properties (e.g., O₂ paramagnetism).",
+      "Wave Superposition — MOs form as linear combinations of atomic orbitals (LCAO): ψ_MO = c_A ψ_A + c_B ψ_B.",
+      "Bonding vs Antibonding — In-phase combination increases electron density between nuclei (bonding); out-of-phase introduces a node (antibonding).",
+      "MO Diagrams for H₂ — Simple σ (bonding) and σ* (antibonding) pair explains bond order and stability.",
+      "MO Summary — Fill from lowest to highest energy, obeying Pauli and Hund’s rules at MO level.",
+      "Second-Row Homonuclear Diatomics — Construction of σ and π MOs from 2s and 2p AOs (B₂, C₂, N₂, O₂, F₂).",
+      "s–p Mixing — Energy ordering of σ2p and π2p can swap for lighter diatomics due to interaction with σ2s and σ*2s.",
+      "Bond Order in MO — Bond order = (bonding e⁻ − antibonding e⁻)/2."
+    ],
+    deeperTheory: [
+      "LCAO and Orthogonality — MOs are chosen to be orthogonal and normalized; this simplifies electron counting and energy calculations.",
+      "Energy Splitting — Overlap between AOs determines how far bonding and antibonding levels split in energy.",
+      "Paramagnetism of O₂ — MO diagram predicts two unpaired electrons in π*2p, explaining attraction to magnetic fields.",
+      "Delocalization — MOs naturally delocalize electron density across multiple atoms, allowing explanation of resonance and conjugation."
+    ],
+    skills: [
+      "Construct and interpret simple MO diagrams for diatomic molecules.",
+      "Calculate bond order from MO occupancy.",
+      "Predict whether a species is paramagnetic or diamagnetic.",
+      "Relate MO picture to Lewis structures (where they agree or disagree)."
+    ],
+    formulas: [
+      { expr: "Bond order (MO):  (n_bonding − n_antibonding) / 2", label: "" }
+    ]
+  },
+  {
+    id: "ch9",
+    short: "Ch 9",
+    code: "9.1–9.13",
+    title: "Valence Bond Theory and Hybridization",
+    bigPicture: [
+      "Valence Bond (VBT) theory describes bonds as overlaps between localized atomic or hybrid orbitals.",
+      "Hybridization mixes s, p, (and sometimes d) orbitals to align electron density with observed molecular shapes.",
+      "VBT is powerful for explaining localized bonds and simple shapes, but it has limitations for delocalization."
+    ],
+    keyConcepts: [
+      "Valence Bond Picture — A covalent bond forms when half-filled orbitals from two atoms overlap and electrons pair with opposite spins.",
+      "Hybrid Orbitals — Linear combinations of s and p orbitals (and sometimes d) form directed hybrids (sp, sp², sp³, sp³d, sp³d²).",
+      "Geometry Links — sp → linear; sp² → trigonal planar; sp³ → tetrahedral; sp³d → trigonal bipyramidal; sp³d² → octahedral.",
+      "σ and π Bonds — σ bonds from head-on overlap; π bonds from side-on overlap of p orbitals.",
+      "Examples — Use VBT+hybridization to rationalize shapes and bond angles in common molecules (CH₄, NH₃, H₂O, CO₂, etc.).",
+      "Limitations — VBT struggles with molecules requiring extensive delocalization (e.g., benzene) or accurate excited states."
+    ],
+    deeperTheory: [
+      "Mathematical Form — In VBT, the total wavefunction is a linear combination of structures built from localized overlaps.",
+      "Connection to MO — MO and VBT wavefunctions can be transformed into each other by unitary transformations; they are alternative bases for the same Hilbert space.",
+      "Hybridization as a Choice of Basis — Hybrids are chosen for convenience: they simplify interpretation of directionality and bonding.",
+      "Electron Pairing — Spin pairing in overlapping orbitals lowers energy via exchange interactions and reduced electron–electron repulsion."
+    ],
+    skills: [
+      "Assign hybridization from electron domain count (VSEPR connection).",
+      "Draw σ and π bonding schemes for simple molecules.",
+      "Explain bond angles qualitatively using hybridization and lone pair repulsion.",
+      "Recognize when VBT is not sufficient and MO ideas are needed."
+    ],
+    formulas: []
+  },
+  {
+    id: "ch10",
+    short: "Ch 10",
+    code: "10.1–10.31",
+    title: "Conjugation and Colour",
+    bigPicture: [
+      "Conjugation (alternating single and multiple bonds) allows π electrons to delocalize over multiple atoms.",
+      "Delocalization decreases energy gaps between occupied and unoccupied levels, which can shift absorption into the visible region.",
+      "The colour of many organic molecules arises from π→π* transitions in extended conjugated systems."
+    ],
+    keyConcepts: [
+      "Definition of Conjugation — A system where p orbitals overlap across multiple adjacent atoms (e.g., C=C–C=C).",
+      "Consequences of Conjugation — Lower overall energy, increased stability, shorter “single” bonds, and distinct spectroscopy.",
+      "MO Picture of 1,3-Butadiene — Four π MOs with different node patterns and energies; electrons fill from lowest upward.",
+      "Particle-in-a-Box Approximation — Approximate a conjugated chain as an electron in a 1D box; more conjugation → bigger L → smaller ΔE.",
+      "Colour and Absorption — When ΔE between HOMO and LUMO matches visible photon energies, the molecule absorbs visible light and appears coloured.",
+      "Subtractive Colour Theory — The observed colour is the complement of the absorbed colour.",
+      "Applications — Organic dyes, indicators, and biological pigments (β-carotene, retinal)."
+    ],
+    deeperTheory: [
+      "MO Ladder — Increasing conjugation adds more closely spaced π MOs, narrowing HOMO–LUMO gaps.",
+      "Node Counting — Higher-energy MOs have more nodes, analogous to higher n in particle-in-a-box or harmonic waves.",
+      "Selection Rules — π→π* transitions are often allowed and intense; symmetry can enhance or forbid transitions.",
+      "Tuning Colour — Changing the π system length or adding electron-donating/withdrawing groups shifts absorption wavelengths."
+    ],
+    skills: [
+      "Identify conjugated vs non-conjugated systems.",
+      "Sketch qualitative MO diagrams for simple conjugated systems.",
+      "Predict how increasing conjugation shifts absorption (towards longer λ).",
+      "Relate observed colour to absorbed wavelength qualitatively."
+    ],
+    formulas: [
+      { expr: "Particle-in-a-box:  Eₙ = n² h² / (8 m L²)", label: "L ∝ conjugation length" },
+      { expr: "ΔE ≈ E_LUMO − E_HOMO ∝ 1 / L²", label: "Longer conjugation → smaller ΔE → longer λ" }
+    ]
+  },
+  {
+    id: "ch11",
+    short: "Ch 11",
+    code: "11.1–11.34",
+    title: "Properties of Molecules and Macromolecules",
+    bigPicture: [
+      "Intermolecular forces (IMFs) link molecular structure to bulk properties like boiling point and solubility.",
+      "Different types of solids (ionic, molecular, network covalent) arise from different bonding patterns.",
+      "Polymers and macromolecules illustrate how repeated units and architecture control material properties and sustainability issues."
+    ],
+    keyConcepts: [
+      "Intermolecular Forces — Dispersion, dipole–dipole, hydrogen bonding, ion–dipole; strength depends on polarity, size, and shape.",
+      "Boiling & Melting — Stronger IMFs → higher melting/boiling points; branching and shape also matter.",
+      "Solubility — “Like dissolves like”: polar solutes dissolve in polar solvents; non-polar in non-polar.",
+      "Types of Solids — Ionic (ions in a lattice), molecular (discrete molecules held by IMFs), network covalent (continuous covalent bonding).",
+      "Examples of Solids — NaCl (ionic), ice and dry ice (molecular), diamond and SiO₂ (network).",
+      "Polymers — Long chains built from repeating monomers; can be linear, branched, or crosslinked.",
+      "Silicones — Inorganic–organic polymers with Si–O backbones; important in materials and coatings.",
+      "Sustainability Issues — Feedstock sources, recycling, microplastics, biodegradable polymers, and polymers in biology."
+    ],
+    deeperTheory: [
+      "Microscopic Origin of IMFs — Instantaneous dipoles induce others (dispersion); permanent dipoles align (dipole–dipole); H-bonding involves particularly strong dipoles.",
+      "Network vs Molecular Solids — In network solids, the whole crystal is one giant molecule, leading to very high melting points and hardness.",
+      "Polymer Tangles — Chain length and entanglement affect mechanical properties like toughness and elasticity.",
+      "Environmental Fate — Bond types (C–C vs ester vs amide) and crystallinity influence degradability and persistence."
+    ],
+    skills: [
+      "Identify dominant IMFs for a given substance.",
+      "Predict relative boiling points and solubilities from structure.",
+      "Classify solids as ionic, molecular, or network covalent.",
+      "Describe polymer types and relate structure to properties."
+    ],
+    formulas: []
+  },
+  {
+    id: "ch12",
+    short: "Ch 12",
+    code: "12.1–12.17",
+    title: "Chemistry and Society: Chemicals in Our World",
+    bigPicture: [
+      "“Natural” and “synthetic” are about origin, not fundamental chemical difference; molecules don’t carry moral labels.",
+      "Risk depends on dose, exposure, and context, not just on whether something is man-made.",
+      "Pharmaceutical and green chemistry show how chemical knowledge can be used to benefit health and the environment."
+    ],
+    keyConcepts: [
+      "Natural vs Synthetic — Same molecule (e.g., vitamin C) has the same properties regardless of source.",
+      "Organic Farming — Uses certain allowed inputs and practices; still fundamentally based on chemistry of nutrients and soil.",
+      "Toxicity — Depends on dose, route of exposure, and individual sensitivity; “the dose makes the poison”.",
+      "Drug Discovery — Starts from targets and lead compounds; involves optimization of potency, selectivity, and ADME (absorption, distribution, metabolism, excretion).",
+      "Mode of Action — How a drug interacts with biological targets (receptors, enzymes, DNA).",
+      "Life-Cycle Assessment — Evaluates environmental impact from raw materials to disposal.",
+      "Green Chemistry — Principles that aim to reduce waste, toxicity, and energy use.",
+      "Careers in Chemistry — Roles in industry, academia, government, and beyond."
+    ],
+    deeperTheory: [
+      "Structure–Activity Relationships — Small structural changes can dramatically alter biological activity and toxicity.",
+      "Bioaccumulation — Persistent, lipophilic compounds can concentrate up the food chain.",
+      "Trade-offs — Replacing a harmful chemical may introduce new risks; decisions balance performance, cost, and safety.",
+      "Ethics and Communication — Chemists must communicate risk, uncertainty, and benefits clearly to non-experts."
+    ],
+    skills: [
+      "Critically read claims about “chemical-free” or “all-natural” products.",
+      "Explain toxicity as a function of dose and exposure.",
+      "Describe how green chemistry principles could improve a given process."
+    ],
+    formulas: []
+  }
+];
+
+// Render sidebar
+const listEl = document.getElementById("chapter-list");
+const contentEl = document.getElementById("chapter-content");
+const toastEl = document.getElementById("toast");
+
+function renderSidebar(){
+  listEl.innerHTML = "";
+  chapters.forEach((ch, idx)=>{
+    const btn = document.createElement("button");
+    btn.className = "chapter-btn" + (idx === 1 ? " active" : ""); // default to Ch 2
+    btn.dataset.id = ch.id;
+    btn.innerHTML = `
+      <span class="code">${ch.short} · <span>${ch.code}</span></span>
+      <strong>${ch.title}</strong>
+    `;
+    btn.addEventListener("click", ()=>setActiveChapter(ch.id));
+    listEl.appendChild(btn);
+  });
+}
+
+function renderChapter(ch){
+  const formulaSection = ch.formulas && ch.formulas.length
+    ? `
+      <div class="section">
+        <h2><span class="emoji">📐</span> Formulas &amp; quantitative hooks <span class="tag">micro grain</span></h2>
+        <div class="block">
+          <div class="formula-grid">
+            ${ch.formulas.map(f => `
+              <div class="formula-line">
+                <span data-copyable tabindex="0" title="Double-click to copy formula">${f.expr}${f.label ? " — " + f.label : ""}</span>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      </div>
+    `
+    : "";
+
+  contentEl.innerHTML = `
+    <h1 style="margin:0 0 4px;font-size:18px;">${ch.title}</h1>
+    <p style="margin:0 0 10px;font-size:12px;color:var(--muted);">
+      Multi-grain view: start with the <span class="kbd">Big Picture</span>, then <span class="kbd">Key Concepts</span>, then dip into <span class="kbd">Deeper Theory</span>. Double-click any bullet to copy it.
+    </p>
+
+    <div class="section">
+      <h2><span class="emoji">🌐</span> Big Picture <span class="tag">large grain</span></h2>
+      <div class="block">
+        <ul>
+          ${ch.bigPicture.map(line => `
+            <li><span data-copyable tabindex="0" title="Double-click to copy">${line}</span></li>
+          `).join("")}
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="emoji">🔶</span> Key Concepts <span class="tag">medium grain</span></h2>
+      <div class="block">
+        <ul>
+          ${ch.keyConcepts.map(line => `
+            <li><span data-copyable tabindex="0" title="Double-click to copy">${line}</span></li>
+          `).join("")}
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="emoji">🔬</span> Deeper Theory &amp; intuition <span class="tag">micro grain</span></h2>
+      <div class="block">
+        <ul>
+          ${ch.deeperTheory.map(line => `
+            <li><span data-copyable tabindex="0" title="Double-click to copy">${line}</span></li>
+          `).join("")}
+        </ul>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="emoji">🧩</span> Skills &amp; problem types <span class="tag">practice</span></h2>
+      <div class="block">
+        <ul>
+          ${ch.skills.map(line => `
+            <li><span data-copyable tabindex="0" title="Double-click to copy">${line}</span></li>
+          `).join("")}
+        </ul>
+      </div>
+    </div>
+
+    ${formulaSection}
+  `;
+}
+
+function setActiveChapter(id){
+  const ch = chapters.find(c => c.id === id);
+  if(!ch) return;
+  document.querySelectorAll(".chapter-btn").forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.id === id);
+  });
+  renderChapter(ch);
+}
+
+// Copy-on-double-click logic
+let toastTimer = null;
+
+async function copyTextFromElement(el){
+  const text = (el.innerText || el.textContent || "").replace(/\s+/g," ").trim();
+  if(!text) return;
+  try{
+    await navigator.clipboard.writeText(text);
+  }catch{
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try{ document.execCommand("copy"); }catch(e){}
+    ta.remove();
+  }
+}
+
+function showToast(msg){
+  if(!toastEl) return;
+  toastEl.textContent = msg || "Copied ✔";
+  toastEl.style.display = "block";
+  toastEl.style.opacity = "0";
+  toastEl.style.transform = "translateY(-6px)";
+  requestAnimationFrame(()=>{
+    toastEl.style.transition = "opacity .18s ease,transform .18s ease";
+    toastEl.style.opacity = "1";
+    toastEl.style.transform = "translateY(0)";
+  });
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{
+    toastEl.style.opacity = "0";
+    toastEl.style.transform = "translateY(-6px)";
+    setTimeout(()=>{ toastEl.style.display = "none"; }, 200);
+  }, 1100);
+}
+
+document.addEventListener("dblclick", async (ev)=>{
+  const target = ev.target.closest("[data-copyable]");
+  if(!target) return;
+  await copyTextFromElement(target);
+  target.classList.add("copied");
+  setTimeout(()=>target.classList.remove("copied"), 650);
+  showToast("Copied ✔");
+}, { passive:true });
+
+document.addEventListener("keydown", (ev)=>{
+  if(ev.key !== "Enter") return;
+  const target = ev.target.closest("[data-copyable]");
+  if(!target) return;
+  ev.preventDefault();
+  target.dispatchEvent(new MouseEvent("dblclick",{bubbles:true}));
+});
+
+// init
+renderSidebar();
+setActiveChapter("ch2"); // default: chapter 2 (bonding)
+</script>
+</body>
+</html>
+
