@@ -1,0 +1,1082 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>VBT vs MOT — Valence Bond Theory vs Molecular Orbital Theory</title>
+  <style>
+    :root{
+      --bg:#0b0f17;
+      --panel:#111827;
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --accent:#60a5fa;
+      --border:#233044;
+
+      --panel2:#0f172a;
+      --shadow:0 14px 40px rgba(0,0,0,.35);
+      --radius:14px;
+      --radius2:18px;
+      --mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans:system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background:radial-gradient(900px 500px at 10% -10%, rgba(96,165,250,.20), transparent 55%),
+                 radial-gradient(900px 600px at 110% 0%, rgba(167,139,250,.16), transparent 50%),
+                 var(--bg);
+      color:var(--text);
+      line-height:1.55;
+    }
+    a{color:inherit}
+    code, pre{font-family:var(--mono)}
+    .app{min-height:100%; display:flex; flex-direction:column}
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+      padding:10px 12px;
+      background:linear-gradient(180deg, rgba(17,24,39,.92), rgba(17,24,39,.80));
+      backdrop-filter:saturate(1.2) blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    .brand{
+      display:flex; flex-direction:column; gap:2px; min-width:0;
+    }
+    .brand .title{
+      font-weight:650; letter-spacing:.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .brand .subtitle{color:var(--muted); font-size:.88rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .actions{display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end}
+    .btn{
+      appearance:none; border:1px solid var(--border);
+      background:rgba(15,23,42,.85);
+      color:var(--text);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:.9rem;
+      cursor:pointer;
+      transition:transform .08s ease-out, border-color .18s ease-out, background .18s ease-out;
+      user-select:none;
+    }
+    .btn:hover{border-color:rgba(96,165,250,.55); background:rgba(15,23,42,.95); transform:translateY(-1px)}
+    .btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+    .layout{flex:1; display:flex; min-height:0}
+    .sidebar{
+      width:320px; max-width:88vw;
+      border-right:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(15,23,42,.82), rgba(15,23,42,.60));
+      padding:12px;
+      overflow:auto;
+    }
+    .sidebar.hidden{display:none}
+    .search{
+      position:sticky; top:0; z-index:10;
+      padding-bottom:10px;
+      background:linear-gradient(180deg, rgba(15,23,42,.92), rgba(15,23,42,.75));
+      backdrop-filter:saturate(1.2) blur(10px);
+    }
+    .search label{display:block; font-size:.86rem; color:var(--muted); margin:6px 2px}
+    .search .row{display:flex; gap:8px; align-items:center}
+    .search input{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(17,24,39,.75);
+      color:var(--text);
+      outline:none;
+    }
+    .search input:focus{border-color:rgba(96,165,250,.75)}
+    .search .clear{
+      flex:0 0 auto;
+      border-radius:12px;
+      padding:10px 12px;
+      border:1px solid var(--border);
+      background:rgba(17,24,39,.75);
+      cursor:pointer;
+    }
+
+    .toc h2{font-size:.95rem; margin:10px 2px 8px}
+    .toc ul{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px}
+    .toc a{
+      display:block;
+      text-decoration:none;
+      padding:9px 10px;
+      border:1px solid rgba(35,48,68,.8);
+      border-radius:12px;
+      background:rgba(17,24,39,.55);
+      transition:border-color .18s ease-out, background .18s ease-out;
+    }
+    .toc a:hover{border-color:rgba(96,165,250,.55); background:rgba(17,24,39,.75)}
+    .toc a.active{border-color:rgba(96,165,250,.95); box-shadow:0 0 0 2px rgba(96,165,250,.18) inset}
+    .toc li.hidden{display:none}
+    .toc .hint{color:var(--muted); font-size:.86rem; margin:10px 2px}
+    .main{
+      flex:1; min-width:0;
+      overflow:auto;
+      padding:14px 14px 48px;
+    }
+    .wrap{max-width:980px; margin:0 auto; display:flex; flex-direction:column; gap:12px}
+    .hero{
+      border:1px solid var(--border);
+      background:linear-gradient(145deg, rgba(17,24,39,.70), rgba(15,23,42,.55));
+      border-radius:var(--radius2);
+      padding:14px 14px 12px;
+      box-shadow:var(--shadow);
+    }
+    .hero .kicker{
+      color:var(--accent);
+      font-size:.86rem;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      margin:0 0 6px 0;
+    }
+    .hero h1{margin:0; font-size:1.35rem}
+    .hero p{margin:8px 0 0 0; color:var(--muted)}
+
+    details.section{
+      border:1px solid var(--border);
+      background:linear-gradient(145deg, rgba(17,24,39,.66), rgba(15,23,42,.52));
+      border-radius:var(--radius2);
+      overflow:hidden;
+      box-shadow:var(--shadow);
+    }
+    details.section > summary{
+      cursor:pointer;
+      list-style:none;
+      padding:12px 14px;
+      display:flex; align-items:center; gap:10px; justify-content:space-between;
+      border-bottom:1px solid rgba(35,48,68,.55);
+      user-select:none;
+    }
+    details.section > summary::-webkit-details-marker{display:none}
+    .sum-left{display:flex; align-items:center; gap:10px; min-width:0}
+    .badge{
+      flex:0 0 auto;
+      font-size:.78rem;
+      border:1px solid rgba(96,165,250,.55);
+      color:var(--accent);
+      padding:2px 8px;
+      border-radius:999px;
+      background:rgba(96,165,250,.10);
+    }
+    .sum-title{
+      font-weight:650;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .chev{flex:0 0 auto; color:var(--muted); transition:transform .14s ease-out}
+    details.section[open] .chev{transform:rotate(90deg)}
+    .section-body{padding:12px 14px 14px; display:flex; flex-direction:column; gap:10px}
+    .section-body h3{margin:8px 0 0 0; font-size:1.02rem}
+    .section-body h4{margin:6px 0 0 0; font-size:.98rem; color:#dbeafe}
+    .section-body p{margin:0}
+    .section-body ul, .section-body ol{margin:0; padding-left:20px}
+    .muted{color:var(--muted)}
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    @media (max-width: 860px){
+      .grid2{grid-template-columns:1fr}
+      .sidebar{width:300px}
+      .brand .subtitle{display:none}
+    }
+
+    .box{
+      border:1px solid rgba(35,48,68,.85);
+      border-radius:14px;
+      background:rgba(15,23,42,.70);
+      padding:10px 12px;
+    }
+    .box .boxtitle{
+      display:flex; align-items:center; gap:8px;
+      font-weight:700;
+      margin-bottom:6px;
+    }
+    .pill{
+      font-size:.75rem;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.35);
+      color:var(--muted);
+      background:rgba(17,24,39,.55);
+    }
+    .definition{border-color:rgba(52,211,153,.35)}
+    .definition .pill{border-color:rgba(52,211,153,.55); color:#a7f3d0; background:rgba(16,185,129,.10)}
+    .equation{border-color:rgba(96,165,250,.35)}
+    .equation .pill{border-color:rgba(96,165,250,.75); color:#bfdbfe; background:rgba(96,165,250,.12)}
+    .derivation{border-color:rgba(167,139,250,.35)}
+    .derivation .pill{border-color:rgba(167,139,250,.75); color:#ddd6fe; background:rgba(167,139,250,.12)}
+    .example{border-color:rgba(251,191,36,.35)}
+    .example .pill{border-color:rgba(251,191,36,.75); color:#fde68a; background:rgba(251,191,36,.10)}
+    .trap{border-color:rgba(248,113,113,.40)}
+    .trap .pill{border-color:rgba(248,113,113,.70); color:#fecaca; background:rgba(248,113,113,.10)}
+    .checklist{border-color:rgba(96,165,250,.35)}
+    .checklist .pill{border-color:rgba(96,165,250,.75); color:#bfdbfe; background:rgba(96,165,250,.12)}
+    .box pre{
+      margin:8px 0 0 0;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px dashed rgba(148,163,184,.35);
+      background:rgba(2,6,23,.55);
+      overflow:auto;
+      white-space:pre-wrap;
+      word-break:break-word;
+    }
+    .copyable{user-select:text}
+    .copy-hint{color:var(--muted); font-size:.86rem}
+    .hl{box-shadow:0 0 0 2px rgba(96,165,250,.22) inset; border-radius:10px}
+    .toast{
+      position:fixed; left:50%; bottom:14px; transform:translateX(-50%);
+      background:rgba(2,6,23,.92);
+      border:1px solid rgba(96,165,250,.55);
+      color:var(--text);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:.9rem;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .16s ease-out, transform .16s ease-out;
+      z-index:999;
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(-2px)}
+
+    @media print{
+      .topbar,.sidebar{display:none !important}
+      body{background:#fff; color:#000}
+      .main{padding:0}
+      details.section{break-inside:avoid; box-shadow:none}
+      details.section{border:1px solid #bbb; background:#fff}
+      details.section > summary{border-bottom:1px solid #ddd}
+      .box{background:#fff; border:1px solid #ccc}
+      .badge, .pill{border-color:#999 !important; color:#000 !important; background:#fff !important}
+      .toast{display:none !important}
+    }
+  </style>
+
+  <!--
+  ====================================================
+  PART A — CANONICAL TUTORIAL (MARKDOWN)
+  ====================================================
+
+  # VBT vs MOT — Valence Bond Theory vs Molecular Orbital Theory (Chemistry)
+
+  ## A) Big Picture & Origin
+  - **What it is:** Two complementary quantum models for chemical bonding.
+    - **VBT (Valence Bond Theory):** Bonds form from *localized* overlap of atomic orbitals; electrons are paired in bonds/lone pairs.
+    - **MOT (Molecular Orbital Theory):** Atomic orbitals combine to form *delocalized* molecular orbitals occupied by electrons across the whole molecule.
+  - **Why introduced historically:** Early Lewis structures explained valence, but needed a quantum explanation for bond strength, directionality, and spectroscopy.
+    - VBT grew from Heitler–London (H₂) to explain stable covalent bonding via exchange and overlap.
+    - MOT developed (Hund–Mulliken) to explain spectra, delocalization, and magnetic properties (notably O₂ paramagnetism).
+  - **What problems they solve:**
+    - VBT: geometry, directed bonds, hybridization, resonance pictures.
+    - MOT: bond order trends, magnetism, electron delocalization, excited states qualitatively.
+  - **What earlier ideas they extend/unify:** They refine Lewis/Kekulé models with wavefunctions and the Pauli principle; both derive from the same quantum mechanics but choose different “pictures” (localized vs delocalized).
+
+  ## B) Core Concepts & Definitions
+  - **Valence bond (VB) description:** A bond is an electron pair in an orbital formed by overlap of two atomic (or hybrid) orbitals.
+  - **Hybridization (VBT tool):** Mixing of s and p orbitals on one atom to create directed hybrids (sp, sp², sp³) matching molecular shapes.
+  - **Resonance (VBT tool):** When one Lewis structure is insufficient, multiple contributing structures represent a delocalized electron distribution.
+  - **Molecular orbitals (MO):** Orbitals that belong to the whole molecule; electrons occupy them according to Aufbau, Pauli, Hund.
+  - **Bonding vs antibonding MOs:** In-phase combination lowers energy (bonding); out-of-phase raises energy with a node (antibonding, marked * or σ*, π*).
+  - **Bond order (MOT tool):** BO = (N_bonding − N_antibonding)/2.
+  - **Magnetism:** Paramagnetic species have unpaired electrons; diamagnetic have all electrons paired.
+  - **Validity/assumptions:** Both are approximations; choice depends on what property you care about and the level of theory.
+
+  ## C) Equations, Laws, or Theorems
+  - **LCAO combinations (qualitative):** ψ± = c(φ_A ± φ_B) → bonding/antibonding.
+  - **Bond order:** BO = (N_b − N_a)/2.
+  - **Overlap integral (qualitative):** S = ∫ φ_A φ_B dτ; larger overlap usually → stronger bond (in the simplest picture).
+
+  ## D) Derivations or Proofs
+  - **Why bonding/antibonding form:** Two AO combinations are orthogonal; in-phase increases electron density between nuclei → lower potential energy; out-of-phase creates a node → reduced density between nuclei → higher energy.
+  - **Bond order formula reasoning:** Each electron in a bonding MO contributes ~½ to a bond (pair → 1), each in antibonding cancels similarly → BO = (N_b − N_a)/2.
+  - **O₂ paramagnetism (MO reasoning):** Filling places two unpaired electrons in π* orbitals → predicts paramagnetism.
+
+  ## E) Worked Examples
+  1. **H₂:** VBT: σ bond from 1s–1s overlap. MOT: σ1s filled → BO=1, diamagnetic.
+  2. **He₂:** MOT: σ1s and σ*1s both filled → BO=0 (no stable bond).
+  3. **O₂:** MOT: two unpaired e⁻ in π* → BO=2, paramagnetic.
+  4. **N₂:** MOT: BO=3, diamagnetic; explains very strong triple bond.
+  5. **NO vs NO⁺:** Use electron count; BO changes; predicts bond length/strength trends.
+
+  ## F) Common Questions & Misconceptions
+  - “Is one theory correct and the other wrong?” → Both are approximations; same QM, different representations.
+  - “Bond order always equals number of lines in Lewis?” → Often, but not always (delocalization, radicals, ions).
+  - “Always use the same MO ordering.” → For lighter diatomics (B₂–N₂) σ2p/π2p ordering differs from O₂–F₂.
+
+  ## G) Exam Strategy (Short & Focused)
+  - If asked **geometry/hybridization/resonance** → start with VBT + Lewis.
+  - If asked **magnetism/bond order/diatomic trends** → MO diagram + BO formula.
+  - Checklist: count valence e⁻ → choose ordering → fill → compute BO → determine magnetism → compare to bond length/strength.
+
+  ## H) Summary & Connections
+  - VBT = localized bonds; great for structure and “where the bonds are.”
+  - MOT = delocalized orbitals; great for magnetism, spectra, and delocalized bonding.
+  - Connections: spectroscopy, conjugation/aromaticity, band theory (solids), coordination chemistry.
+  -->
+
+  <script id="studyPageStructure" type="application/json">
+  {
+    "title": "Valence Bond Theory (VBT) vs Molecular Orbital Theory (MOT)",
+    "subject": "chemistry",
+    "sections": [
+      {
+        "id": "origin",
+        "title": "Big Picture & Origin",
+        "subsections": [
+          {"id":"what", "title":"What each theory is"},
+          {"id":"why", "title":"Historical motivation"},
+          {"id":"what-solves", "title":"Problems each explains best"}
+        ],
+        "keyConcepts": ["localized vs delocalized bonding", "exchange and overlap", "spectroscopy and magnetism"],
+        "keyEquationsOrTheorems": ["LCAO: ψ± = c(φA ± φB)"]
+      },
+      {
+        "id": "definitions",
+        "title": "Core Concepts & Definitions",
+        "subsections": [
+          {"id":"vbt-core", "title":"Valence bond picture"},
+          {"id":"mot-core", "title":"Molecular orbital picture"},
+          {"id":"validity", "title":"Assumptions and limitations"}
+        ],
+        "keyConcepts": ["hybridization", "resonance", "bonding/antibonding", "bond order", "paramagnetism/diamagnetism"],
+        "keyEquationsOrTheorems": ["Overlap integral S = ∫ φA φB dτ", "Bond order = (Nb − Na)/2"]
+      },
+      {
+        "id": "equations",
+        "title": "Equations, Laws, or Theorems",
+        "subsections": [
+          {"id":"lcao", "title":"LCAO combinations"},
+          {"id":"bo", "title":"Bond order"},
+          {"id":"magnetism", "title":"Magnetism criterion (unpaired electrons)"}
+        ],
+        "keyConcepts": ["orbital combination", "electron filling rules", "trend predictions"],
+        "keyEquationsOrTheorems": ["ψ± = c(φA ± φB)", "BO = (Nb − Na)/2"]
+      },
+      {
+        "id": "derivations",
+        "title": "Derivations or Proofs",
+        "subsections": [
+          {"id":"bonding-antibonding", "title":"Why bonding vs antibonding arises"},
+          {"id":"bo-derivation", "title":"Why the bond order formula works"},
+          {"id":"o2", "title":"O2 paramagnetism via MO filling"}
+        ],
+        "keyConcepts": ["phase and nodes", "energy splitting", "electron cancellation"],
+        "keyEquationsOrTheorems": ["BO = (Nb − Na)/2"]
+      },
+      {
+        "id": "examples",
+        "title": "Worked Examples",
+        "subsections": [
+          {"id":"h2", "title":"H2 and He2"},
+          {"id":"b2-to-n2", "title":"B2/C2/N2 ordering and magnetism"},
+          {"id":"o2-f2", "title":"O2 and F2 bond order and magnetism"},
+          {"id":"no", "title":"NO vs NO+ trends"}
+        ],
+        "keyConcepts": ["electron counting", "MO diagrams", "bond order vs bond length"],
+        "keyEquationsOrTheorems": ["BO = (Nb − Na)/2"]
+      },
+      {
+        "id": "misconceptions",
+        "title": "Common Questions & Misconceptions",
+        "subsections": [
+          {"id":"one-correct", "title":"Is one theory 'right'?"},
+          {"id":"bo-vs-lines", "title":"Bond order vs Lewis lines"},
+          {"id":"ordering", "title":"MO ordering traps"}
+        ],
+        "keyConcepts": ["model limitations", "delocalization", "s–p mixing"],
+        "keyEquationsOrTheorems": []
+      },
+      {
+        "id": "exam",
+        "title": "Exam Strategy (Short & Focused)",
+        "subsections": [
+          {"id":"triggers", "title":"Trigger words and methods"},
+          {"id":"check", "title":"Fast checklist"},
+          {"id":"traps", "title":"Common exam traps"}
+        ],
+        "keyConcepts": ["method selection", "diagram hygiene", "units/trends"],
+        "keyEquationsOrTheorems": ["BO = (Nb − Na)/2"]
+      },
+      {
+        "id": "summary",
+        "title": "Summary & Connections",
+        "subsections": [
+          {"id":"summary-plain", "title":"Plain-language summary"},
+          {"id":"connections", "title":"Connections to other topics"},
+          {"id":"applications", "title":"Where it shows up"}
+        ],
+        "keyConcepts": ["spectroscopy", "aromaticity/delocalization", "coordination chemistry", "band theory"],
+        "keyEquationsOrTheorems": []
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <div class="app">
+    <div class="topbar" role="banner">
+      <div class="brand">
+        <div class="title">VBT vs MOT</div>
+        <div class="subtitle">Valence Bond Theory vs Molecular Orbital Theory (Chemistry)</div>
+      </div>
+      <div class="actions" role="toolbar" aria-label="Page controls">
+        <button class="btn" id="btnToggleSidebar" type="button">Toggle Sidebar</button>
+        <button class="btn" id="btnExpandAll" type="button">Expand All</button>
+        <button class="btn" id="btnCollapseAll" type="button">Collapse All</button>
+        <button class="btn" id="btnPrint" type="button">Print</button>
+      </div>
+    </div>
+
+    <div class="layout">
+      <aside class="sidebar" id="sidebar" aria-label="Table of contents">
+        <div class="search">
+          <label for="q">Search headings</label>
+          <div class="row">
+            <input id="q" type="search" placeholder="e.g., bond order, O₂, resonance" autocomplete="off" />
+            <button class="clear" id="btnClear" type="button" aria-label="Clear search">✕</button>
+          </div>
+        </div>
+
+        <nav class="toc" aria-label="Contents">
+          <h2>Contents</h2>
+          <ul id="tocList">
+            <li data-toc-item><a data-toc-link href="#origin">A) Big Picture &amp; Origin</a></li>
+            <li data-toc-item><a data-toc-link href="#definitions">B) Core Concepts &amp; Definitions</a></li>
+            <li data-toc-item><a data-toc-link href="#equations">C) Equations, Laws, or Theorems</a></li>
+            <li data-toc-item><a data-toc-link href="#derivations">D) Derivations or Proofs</a></li>
+            <li data-toc-item><a data-toc-link href="#examples">E) Worked Examples</a></li>
+            <li data-toc-item><a data-toc-link href="#misconceptions">F) Common Questions &amp; Misconceptions</a></li>
+            <li data-toc-item><a data-toc-link href="#exam">G) Exam Strategy (Short &amp; Focused)</a></li>
+            <li data-toc-item><a data-toc-link href="#summary">H) Summary &amp; Connections</a></li>
+            <li data-toc-item><a data-toc-link href="#exports">Exports (Markdown + JSON)</a></li>
+          </ul>
+          <div class="hint">Tip: double-click any equation/theorem/formula block to copy it.</div>
+        </nav>
+      </aside>
+
+      <main class="main" id="main" aria-label="Tutorial">
+        <div class="wrap">
+          <section class="hero" aria-label="Overview">
+            <p class="kicker">Chemistry • Bonding Models</p>
+            <h1>Valence Bond Theory (VBT) vs Molecular Orbital Theory (MOT)</h1>
+            <p>
+              Two quantum “pictures” of the same underlying physics: <strong>VBT</strong> emphasizes
+              <em>localized</em> bonds and shape; <strong>MOT</strong> emphasizes <em>delocalized</em> orbitals,
+              electron occupancy, and properties like <strong>magnetism</strong> and <strong>bond order</strong>.
+            </p>
+          </section>
+
+          <details class="section" id="origin" data-title="Big Picture & Origin" open>
+            <summary>
+              <div class="sum-left">
+                <span class="badge">A</span>
+                <span class="sum-title">Big Picture &amp; Origin</span>
+              </div>
+              <span class="chev">▶</span>
+            </summary>
+            <div class="section-body">
+              <h3 id="origin-what">What each theory is</h3>
+              <div class="grid2">
+                <div class="box definition">
+                  <div class="boxtitle"><span class="pill">Definition</span> Valence Bond Theory (VBT)</div>
+                  <p><strong>Textbook definition:</strong> A chemical bond forms when two atoms contribute orbitals that overlap and two electrons occupy the resulting bonding region with opposite spins (a localized electron-pair bond).</p>
+                  <p><strong>Plain language:</strong> Think “bonds are <em>between</em> specific atoms,” like sticks connecting balls.</p>
+                  <p><strong>Logical meaning:</strong> Use localized orbitals (often hybrids) to match observed geometry and bond directionality.</p>
+                  <p class="muted"><strong>Conditions:</strong> Best when a localized bonding picture is appropriate; delocalization is handled indirectly via resonance.</p>
+                </div>
+                <div class="box definition">
+                  <div class="boxtitle"><span class="pill">Definition</span> Molecular Orbital Theory (MOT)</div>
+                  <p><strong>Textbook definition:</strong> Atomic orbitals combine (LCAO) to form molecular orbitals that extend over the entire molecule; electrons occupy these MOs following Aufbau, Pauli, and Hund rules.</p>
+                  <p><strong>Plain language:</strong> Electrons can belong to the whole molecule, not just one bond.</p>
+                  <p><strong>Physical meaning:</strong> Electron density and nodes in MOs explain stability, spectroscopy, and magnetism.</p>
+                  <p class="muted"><strong>Conditions:</strong> Especially powerful for diatomics, conjugation, aromaticity, and magnetic properties.</p>
+                </div>
+              </div>
+
+              <h3 id="origin-why">Why they were introduced (historical motivation)</h3>
+              <ul>
+                <li><strong>Lewis structures</strong> (electron pairs) explained valence but did not provide a quantum-mechanical wavefunction or predict magnetic behavior reliably.</li>
+                <li><strong>VBT</strong> (Heitler–London, 1927) explained why H<sub>2</sub> is stable: overlap + electron exchange lowers energy and favors paired spins in a bonding region.</li>
+                <li><strong>MOT</strong> (Hund, Mulliken) became essential when delocalization and spectroscopy mattered—most famously, it naturally explains why <strong>O<sub>2</sub> is paramagnetic</strong>.</li>
+              </ul>
+
+              <h3 id="origin-what-solves">What problems each model solves best</h3>
+              <div class="box">
+                <div class="boxtitle"><span class="pill">Quick Map</span> “Use this when…”</div>
+                <ul>
+                  <li><strong>VBT shines:</strong> geometry (hybridization), directed bonds, sigma/pi bonding language, resonance as a structure tool.</li>
+                  <li><strong>MOT shines:</strong> bond order trends, magnetism, delocalization (one MO description instead of many resonance structures), qualitative spectra/excited states.</li>
+                </ul>
+              </div>
+            </div>
+          </details>
+
+          <details class="section" id="definitions" data-title="Core Concepts & Definitions" open>
+            <summary>
+              <div class="sum-left">
+                <span class="badge">B</span>
+                <span class="sum-title">Core Concepts &amp; Definitions</span>
+              </div>
+              <span class="chev">▶</span>
+            </summary>
+            <div class="section-body">
+              <h3 id="definitions-vbt">VBT core tools</h3>
+
+              <div class="box definition">
+                <div class="boxtitle"><span class="pill">Definition</span> Overlap (VBT)</div>
+                <p><strong>Textbook definition:</strong> The spatial overlap of two atomic (or hybrid) orbitals, associated with increased electron density between nuclei in a bonding interaction.</p>
+                <p><strong>Plain language:</strong> More “orbital sharing” in the internuclear region usually means a stronger bond (within a simple model).</p>
+                <p class="muted"><strong>Assumptions:</strong> Works best as a qualitative guide; true bond strength depends on full electronic structure, repulsions, and correlation.</p>
+              </div>
+
+              <div class="box definition">
+                <div class="boxtitle"><span class="pill">Definition</span> Hybridization (VBT)</div>
+                <p><strong>Textbook definition:</strong> Linear combination of an atom’s valence orbitals (e.g., s and p) to form equivalent hybrid orbitals oriented for bonding (sp, sp<sup>2</sup>, sp<sup>3</sup>, …).</p>
+                <p><strong>Logical meaning:</strong> A bookkeeping/geometry model: it explains observed bond angles and “directional” bonding.</p>
+                <p class="muted"><strong>Validity:</strong> Most useful in organic/main-group structure; not a unique physical observable (it’s a chosen orbital basis).</p>
+              </div>
+
+              <div class="box definition">
+                <div class="boxtitle"><span class="pill">Definition</span> Resonance (VBT)</div>
+                <p><strong>Textbook definition:</strong> A molecule is described as a superposition of multiple contributing Lewis/VB structures when no single structure captures electron distribution.</p>
+                <p><strong>Plain language:</strong> You draw several reasonable pictures; the real molecule is “in between.”</p>
+                <p class="muted"><strong>Common use:</strong> benzene, allyl systems, carbonate, nitrite, etc.</p>
+              </div>
+
+              <h3 id="definitions-mot">MOT core tools</h3>
+
+              <div class="box definition">
+                <div class="boxtitle"><span class="pill">Definition</span> Molecular Orbital (MO)</div>
+                <p><strong>Textbook definition:</strong> A one-electron wavefunction for a molecule; electrons occupy MOs across the whole molecule.</p>
+                <p><strong>Physical meaning:</strong> Nodes/phase and spatial extent control bonding, antibonding, and electron density distribution.</p>
+                <p class="muted"><strong>Units:</strong> Orbitals are wavefunctions; energies are often reported in eV or kJ·mol<sup>−1</sup> depending on context.</p>
+              </div>
+
+              <div class="box definition">
+                <div class="boxtitle"><span class="pill">Definition</span> Bonding vs Antibonding MOs</div>
+                <p><strong>Bonding:</strong> in-phase combination increases electron density between nuclei → stabilizes.</p>
+                <p><strong>Antibonding:</strong> out-of-phase combination introduces a node between nuclei → destabilizes (marked with <code>*</code>, e.g., σ*, π*).</p>
+              </div>
+
+              <div class="box definition">
+                <div class="boxtitle"><span class="pill">Definition</span> Bond Order (MOT)</div>
+                <p><strong>Textbook definition:</strong> A measure of net bonding from MO occupancy.</p>
+                <pre class="copyable equation-block" data-copy>Bond order (BO) = (N_bonding − N_antibonding) / 2</pre>
+                <p class="muted"><strong>Interpretation:</strong> Larger BO → typically shorter, stronger bonds (trend-level rule).</p>
+              </div>
+
+              <div class="box definition">
+                <div class="boxtitle"><span class="pill">Definition</span> Magnetism criterion</div>
+                <p><strong>Paramagnetic:</strong> ≥1 unpaired electron (attracted to a magnetic field).</p>
+                <p><strong>Diamagnetic:</strong> all electrons paired (weakly repelled).</p>
+                <p class="muted"><strong>In exams:</strong> MO diagrams make this almost automatic once you fill correctly.</p>
+              </div>
+
+              <h3 id="definitions-validity">Assumptions & limitations (what to trust)</h3>
+              <ul>
+                <li>Both theories are <strong>models</strong> derived from quantum mechanics; they differ mainly by the orbital basis (localized vs delocalized) and the approximations emphasized.</li>
+                <li><strong>VBT limitation:</strong> struggles to predict magnetism and delocalization without extra constructs (resonance, configuration mixing).</li>
+                <li><strong>MOT limitation:</strong> can feel less intuitive for “where a bond is”; diagrams can be misapplied if ordering is wrong or if the molecule isn’t well-approximated as simple diatomic MO filling.</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="section" id="equations" data-title="Equations, Laws, or Theorems" open>
+            <summary>
+              <div class="sum-left">
+                <span class="badge">C</span>
+                <span class="sum-title">Equations, Laws, or Theorems</span>
+              </div>
+              <span class="chev">▶</span>
+            </summary>
+            <div class="section-body">
+              <div class="box equation">
+                <div class="boxtitle"><span class="pill">Equation</span> LCAO combinations (qualitative)</div>
+                <p><strong>Statement:</strong> combining two similar atomic orbitals φ<sub>A</sub>, φ<sub>B</sub> yields two MOs: one bonding and one antibonding.</p>
+                <pre class="copyable equation-block" data-copy>ψ± = c(φA ± φB)</pre>
+                <p><strong>Symbols:</strong> φ<sub>A</sub>, φ<sub>B</sub> are atomic orbitals; <code>c</code> is a normalization/mixing constant; <code>+</code> gives bonding, <code>−</code> gives antibonding (phase matters).</p>
+                <p class="muted"><strong>Applies when:</strong> orbitals have appropriate symmetry and comparable energies; overlap is non-negligible.</p>
+              </div>
+
+              <div class="box equation">
+                <div class="boxtitle"><span class="pill">Equation</span> Bond order from MO occupancy</div>
+                <pre class="copyable equation-block" data-copy>BO = (N_bonding − N_antibonding) / 2</pre>
+                <p><strong>Meaning:</strong> counts net bonding after antibonding electrons “cancel” bonding electrons.</p>
+                <p class="muted"><strong>Applies best to:</strong> simple MO pictures (especially diatomics). Still useful as a trend tool more broadly.</p>
+              </div>
+
+              <div class="box equation">
+                <div class="boxtitle"><span class="pill">Equation</span> Overlap integral (qualitative bonding strength guide)</div>
+                <pre class="copyable equation-block" data-copy>S = ∫ φA(r) φB(r) dτ</pre>
+                <p><strong>Symbols:</strong> <code>S</code> overlap integral; <code>dτ</code> volume element; <code>r</code> electron coordinate.</p>
+                <p class="muted"><strong>Interpretation:</strong> larger positive overlap generally supports stronger bonding in simple VB thinking, but not a complete predictor of bond energy.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="section" id="derivations" data-title="Derivations or Proofs" open>
+            <summary>
+              <div class="sum-left">
+                <span class="badge">D</span>
+                <span class="sum-title">Derivations or Proofs</span>
+              </div>
+              <span class="chev">▶</span>
+            </summary>
+            <div class="section-body">
+              <div class="box derivation">
+                <div class="boxtitle"><span class="pill">Derivation</span> Why bonding vs antibonding MOs appear</div>
+                <ol>
+                  <li><strong>Assumption:</strong> start with two AOs of compatible symmetry, φ<sub>A</sub> and φ<sub>B</sub>.</li>
+                  <li><strong>Linear combination:</strong> the simplest two independent combinations are φ<sub>A</sub>+φ<sub>B</sub> and φ<sub>A</sub>−φ<sub>B</sub>.</li>
+                  <li><strong>Physical meaning of “+”:</strong> in-phase addition increases electron density between nuclei → lowers potential energy (electron-nucleus attraction wins) → <strong>bonding</strong>.</li>
+                  <li><strong>Physical meaning of “−”:</strong> out-of-phase subtraction forces a node between nuclei → less electron density between nuclei → higher energy → <strong>antibonding</strong>.</li>
+                  <li><strong>Why two?</strong> Because the space spanned by {φ<sub>A</sub>, φ<sub>B</sub>} is 2D; you get two orthogonal combinations.</li>
+                </ol>
+              </div>
+
+              <div class="box derivation">
+                <div class="boxtitle"><span class="pill">Derivation</span> Bond order formula (reasoning)</div>
+                <ol>
+                  <li><strong>Assumption:</strong> a filled bonding MO (2 electrons paired) corresponds roughly to one bond’s worth of stabilizing density between nuclei.</li>
+                  <li>So each electron in a bonding MO contributes about <strong>+½</strong> to bond order; each electron in an antibonding MO contributes about <strong>−½</strong>.</li>
+                  <li>Summing contributions gives <pre class="copyable equation-block" data-copy>BO = (N_bonding − N_antibonding) / 2</pre></li>
+                  <li><strong>Interpretation:</strong> antibonding occupancy partially cancels bonding occupancy; BO predicts trends in bond length/strength.</li>
+                </ol>
+              </div>
+
+              <div class="box derivation">
+                <div class="boxtitle"><span class="pill">Derivation</span> Why O<sub>2</sub> is paramagnetic (MO filling logic)</div>
+                <ol>
+                  <li><strong>Assumption:</strong> use the standard MO set for O<sub>2</sub> (for O<sub>2</sub>/F<sub>2</sub>, the usual ordering has σ2p below π2p).</li>
+                  <li><strong>Count valence electrons:</strong> O has 6 valence e<sup>−</sup>, so O<sub>2</sub> has 12 valence e<sup>−</sup>.</li>
+                  <li><strong>Fill MOs:</strong> after filling bonding MOs, the last electrons enter the degenerate π* antibonding orbitals.</li>
+                  <li><strong>Hund’s rule:</strong> degenerate orbitals fill singly before pairing → leaves <strong>two unpaired electrons</strong>.</li>
+                  <li><strong>Conclusion:</strong> O<sub>2</sub> is <strong>paramagnetic</strong> (matches experiment).</li>
+                </ol>
+              </div>
+            </div>
+          </details>
+
+          <details class="section" id="examples" data-title="Worked Examples" open>
+            <summary>
+              <div class="sum-left">
+                <span class="badge">E</span>
+                <span class="sum-title">Worked Examples</span>
+              </div>
+              <span class="chev">▶</span>
+            </summary>
+            <div class="section-body">
+
+              <div class="box example" id="examples-h2">
+                <div class="boxtitle"><span class="pill">Example 1</span> H<sub>2</sub>: VBT and MOT agree (simple covalent bond)</div>
+                <p><strong>Goal:</strong> decide stability, bond order, and magnetism.</p>
+                <ul>
+                  <li><strong>VBT idea:</strong> 1s orbitals overlap end-on → σ bond; two electrons pair in bonding region.</li>
+                  <li><strong>MOT electron count:</strong> 2 valence e<sup>−</sup> total.</li>
+                  <li><strong>Fill:</strong> σ1s gets 2 e<sup>−</sup>, σ*1s gets 0.</li>
+                </ul>
+                <pre class="copyable equation-block" data-copy>BO = (2 − 0)/2 = 1  → stable single bond; all electrons paired → diamagnetic</pre>
+                <div class="box trap" style="margin-top:10px">
+                  <div class="boxtitle"><span class="pill">Common Trap</span> Thinking “MO is always complicated”</div>
+                  <p>For many cases, MO is just systematic electron counting + filling—H<sub>2</sub> is the cleanest example.</p>
+                </div>
+              </div>
+
+              <div class="box example">
+                <div class="boxtitle"><span class="pill">Example 2</span> He<sub>2</sub>: why it doesn’t form a stable molecule (MO explains fast)</div>
+                <p><strong>Count valence electrons:</strong> 4 total (2 from each He).</p>
+                <p><strong>Fill:</strong> σ1s has 2 e<sup>−</sup>, σ*1s has 2 e<sup>−</sup>.</p>
+                <pre class="copyable equation-block" data-copy>BO = (2 − 2)/2 = 0  → no net bond (not stable as a molecule)</pre>
+                <p class="muted"><strong>Intuition:</strong> antibonding electrons cancel bonding stabilization completely.</p>
+              </div>
+
+              <div class="box example" id="examples-b2n2">
+                <div class="boxtitle"><span class="pill">Example 3</span> B<sub>2</sub> vs N<sub>2</sub>: bond order and magnetism trends (ordering matters)</div>
+                <p><strong>Key idea:</strong> For lighter homonuclear diatomics (roughly B<sub>2</sub>–N<sub>2</sub>), <strong>s–p mixing</strong> can place <strong>π2p below σ2p</strong>. (Many courses test this as a known rule.)</p>
+                <ul>
+                  <li><strong>B<sub>2</sub> (6 valence e<sup>−</sup>):</strong> after σ2s and σ*2s, the next electrons enter π2p (degenerate) → two unpaired electrons → <strong>paramagnetic</strong>.</li>
+                  <li><strong>N<sub>2</sub> (10 valence e<sup>−</sup>):</strong> fills bonding 2p MOs fully before antibonding → <strong>BO = 3</strong>, <strong>diamagnetic</strong>.</li>
+                </ul>
+                <div class="box trap" style="margin-top:10px">
+                  <div class="boxtitle"><span class="pill">Common Trap</span> Using the wrong MO ordering</div>
+                  <p>If you use the O<sub>2</sub>-type ordering for B<sub>2</sub>/C<sub>2</sub>/N<sub>2</sub>, you’ll get wrong magnetism predictions—an easy exam point loss.</p>
+                </div>
+              </div>
+
+              <div class="box example" id="examples-o2f2">
+                <div class="boxtitle"><span class="pill">Example 4</span> O<sub>2</sub> and F<sub>2</sub>: same framework, different outcomes</div>
+                <p><strong>O<sub>2</sub> (12 valence e<sup>−</sup>):</strong> ends with two unpaired electrons in π* → <strong>paramagnetic</strong>, and</p>
+                <pre class="copyable equation-block" data-copy>O2: BO = 2</pre>
+                <p><strong>F<sub>2</sub> (14 valence e<sup>−</sup>):</strong> adds two more electrons that pair up in π* → <strong>diamagnetic</strong>, and</p>
+                <pre class="copyable equation-block" data-copy>F2: BO = 1</pre>
+                <p class="muted"><strong>Trend:</strong> lower BO → longer/weaker bond (F–F is notably weak among halogens due to additional effects too, but MO BO gets the direction right).</p>
+              </div>
+
+              <div class="box example" id="examples-no">
+                <div class="boxtitle"><span class="pill">Example 5</span> NO vs NO<sup>+</sup>: predicting bond strength changes by electron count</div>
+                <p><strong>Strategy:</strong> treat as “like O<sub>2</sub> but with one less/more electron” in many introductory MO treatments.</p>
+                <ul>
+                  <li><strong>NO</strong> has 11 valence e<sup>−</sup> → one unpaired electron → typically <strong>paramagnetic</strong>.</li>
+                  <li><strong>NO<sup>+</sup></strong> has 10 valence e<sup>−</sup> → tends to increase bond order relative to NO → shorter/stronger bond.</li>
+                </ul>
+                <div class="box trap" style="margin-top:10px">
+                  <div class="boxtitle"><span class="pill">Common Trap</span> Mixing “formal charge” rules with MO filling</div>
+                  <p>In MO problems, the cleanest path is almost always: <strong>count valence electrons → fill → BO + magnetism</strong>. Formal charge is a different bookkeeping tool.</p>
+                </div>
+              </div>
+
+            </div>
+          </details>
+
+          <details class="section" id="misconceptions" data-title="Common Questions & Misconceptions" open>
+            <summary>
+              <div class="sum-left">
+                <span class="badge">F</span>
+                <span class="sum-title">Common Questions &amp; Misconceptions</span>
+              </div>
+              <span class="chev">▶</span>
+            </summary>
+            <div class="section-body">
+              <div class="box trap">
+                <div class="boxtitle"><span class="pill">Common Trap</span> “One of these is correct; the other is wrong.”</div>
+                <p>Both come from quantum mechanics. They are different <strong>representations</strong> (localized vs delocalized) with different approximations and strengths.</p>
+              </div>
+
+              <div class="box trap">
+                <div class="boxtitle"><span class="pill">Common Trap</span> “Bond order = number of lines in the Lewis structure, always.”</div>
+                <p>Lewis/VBT lines are a localized picture; MO bond order is an occupancy-based measure. They often match for simple molecules, but diverge with radicals, ions, and delocalized systems.</p>
+              </div>
+
+              <div class="box trap">
+                <div class="boxtitle"><span class="pill">Common Trap</span> “MO ordering is universal.”</div>
+                <p>Many curricula use two orderings: one for B<sub>2</sub>–N<sub>2</sub> (π2p below σ2p) and one for O<sub>2</sub>–F<sub>2</sub> (σ2p below π2p). Know which your course expects.</p>
+              </div>
+
+              <div class="box">
+                <div class="boxtitle"><span class="pill">Q&amp;A</span> Typical student questions</div>
+                <ul>
+                  <li><strong>Why does MOT predict magnetism so well?</strong> Because unpaired electrons are explicit in the occupancy pattern.</li>
+                  <li><strong>Does resonance mean the molecule flips between structures?</strong> No—resonance structures are not real, isolated states; the real electron distribution is a single quantum state better represented as a combination.</li>
+                  <li><strong>Can VBT handle delocalization?</strong> Yes, but usually through resonance/configuration mixing rather than a single set of delocalized orbitals.</li>
+                </ul>
+              </div>
+            </div>
+          </details>
+
+          <details class="section" id="exam" data-title="Exam Strategy (Short & Focused)" open>
+            <summary>
+              <div class="sum-left">
+                <span class="badge">G</span>
+                <span class="sum-title">Exam Strategy (Short &amp; Focused)</span>
+              </div>
+              <span class="chev">▶</span>
+            </summary>
+            <div class="section-body">
+              <div class="box checklist">
+                <div class="boxtitle"><span class="pill">Checklist</span> Fast method selection</div>
+                <ul>
+                  <li><strong>Geometry / bond angles / hybridization / resonance?</strong> Start with <strong>VBT + Lewis</strong> (then refine with resonance/hybridization).</li>
+                  <li><strong>Bond order / magnetism / diatomic comparisons?</strong> Use <strong>MO diagram</strong> + <strong>BO</strong>.</li>
+                  <li><strong>“Explain O<sub>2</sub> paramagnetism”</strong> is a direct MOT trigger.</li>
+                </ul>
+              </div>
+
+              <div class="box checklist">
+                <div class="boxtitle"><span class="pill">Checklist</span> MO diagram workflow (diatomics)</div>
+                <ol>
+                  <li>Count <strong>valence electrons</strong> (include charge).</li>
+                  <li>Pick the <strong>correct ordering</strong> for your course (B–N vs O–F rule, if used).</li>
+                  <li>Fill using <strong>Aufbau</strong>, <strong>Pauli</strong>, <strong>Hund</strong>.</li>
+                  <li>Compute <pre class="copyable equation-block" data-copy>BO = (N_b − N_a)/2</pre></li>
+                  <li>Decide <strong>paramagnetic vs diamagnetic</strong> from unpaired electrons.</li>
+                  <li>Translate BO to trends: higher BO → shorter/stronger (as a rule of thumb).</li>
+                </ol>
+              </div>
+
+              <div class="box trap">
+                <div class="boxtitle"><span class="pill">Common Trap</span> “Filling” without labeling bonding/antibonding</div>
+                <p>Always mark which orbitals are bonding vs antibonding before you count N<sub>b</sub> and N<sub>a</sub>.</p>
+              </div>
+            </div>
+          </details>
+
+          <details class="section" id="summary" data-title="Summary & Connections" open>
+            <summary>
+              <div class="sum-left">
+                <span class="badge">H</span>
+                <span class="sum-title">Summary &amp; Connections</span>
+              </div>
+              <span class="chev">▶</span>
+            </summary>
+            <div class="section-body">
+              <div class="box">
+                <div class="boxtitle"><span class="pill">Summary</span> Plain-language takeaways</div>
+                <ul>
+                  <li><strong>VBT:</strong> localized bonds + hybridization → excellent for structure and “bond directions.”</li>
+                  <li><strong>MOT:</strong> delocalized orbitals + occupancy → excellent for bond order trends and magnetism (e.g., O<sub>2</sub>).</li>
+                  <li><strong>They are complementary:</strong> same quantum mechanics, different emphasis and bookkeeping.</li>
+                </ul>
+              </div>
+
+              <div class="box">
+                <div class="boxtitle"><span class="pill">Connections</span> Where this shows up next</div>
+                <ul>
+                  <li><strong>Conjugation/aromaticity:</strong> MO delocalization explains stability and reactivity patterns.</li>
+                  <li><strong>Coordination chemistry:</strong> ligand field theory and MO descriptions of metal–ligand bonding extend these ideas.</li>
+                  <li><strong>Solid-state/band theory:</strong> MO ideas generalize to bands in solids.</li>
+                  <li><strong>Spectroscopy:</strong> electronic transitions are naturally described with MOs.</li>
+                </ul>
+              </div>
+            </div>
+          </details>
+
+          <details class="section" id="exports" data-title="Exports (Markdown + JSON)">
+            <summary>
+              <div class="sum-left">
+                <span class="badge">⇩</span>
+                <span class="sum-title">Exports (Markdown + JSON)</span>
+              </div>
+              <span class="chev">▶</span>
+            </summary>
+            <div class="section-body">
+              <p class="copy-hint">Double-click the blocks to copy. (These mirror the tutorial structure.)</p>
+
+              <div class="box equation">
+                <div class="boxtitle"><span class="pill">PART A</span> Canonical Tutorial (Markdown)</div>
+                <pre class="copyable equation-block" data-copy id="exportMarkdown"># VBT vs MOT — Valence Bond Theory vs Molecular Orbital Theory (Chemistry)
+
+## A) Big Picture & Origin
+- **What it is:** Two complementary quantum models for chemical bonding.
+  - **VBT (Valence Bond Theory):** Bonds form from *localized* overlap of atomic orbitals; electrons are paired in bonds/lone pairs.
+  - **MOT (Molecular Orbital Theory):** Atomic orbitals combine to form *delocalized* molecular orbitals occupied by electrons across the whole molecule.
+- **Why introduced historically:** Early Lewis structures explained valence, but needed a quantum explanation for bond strength, directionality, and spectroscopy.
+  - VBT grew from Heitler–London (H₂) to explain stable covalent bonding via exchange and overlap.
+  - MOT developed (Hund–Mulliken) to explain spectra, delocalization, and magnetic properties (notably O₂ paramagnetism).
+- **What problems they solve:**
+  - VBT: geometry, directed bonds, hybridization, resonance pictures.
+  - MOT: bond order trends, magnetism, electron delocalization, excited states qualitatively.
+- **What earlier ideas they extend/unify:** They refine Lewis/Kekulé models with wavefunctions and the Pauli principle; both derive from the same quantum mechanics but choose different “pictures” (localized vs delocalized).
+
+## B) Core Concepts & Definitions
+- **Valence bond (VB) description:** A bond is an electron pair in an orbital formed by overlap of two atomic (or hybrid) orbitals.
+- **Hybridization (VBT tool):** Mixing of s and p orbitals on one atom to create directed hybrids (sp, sp², sp³) matching molecular shapes.
+- **Resonance (VBT tool):** When one Lewis structure is insufficient, multiple contributing structures represent a delocalized electron distribution.
+- **Molecular orbitals (MO):** Orbitals that belong to the whole molecule; electrons occupy them according to Aufbau, Pauli, Hund.
+- **Bonding vs antibonding MOs:** In-phase combination lowers energy (bonding); out-of-phase raises energy with a node (antibonding, marked * or σ*, π*).
+- **Bond order (MOT tool):** BO = (N_bonding − N_antibonding)/2.
+- **Magnetism:** Paramagnetic species have unpaired electrons; diamagnetic have all electrons paired.
+- **Validity/assumptions:** Both are approximations; choice depends on what property you care about and the level of theory.
+
+## C) Equations, Laws, or Theorems
+- **LCAO combinations (qualitative):** ψ± = c(φ_A ± φ_B) → bonding/antibonding.
+- **Bond order:** BO = (N_b − N_a)/2.
+- **Overlap integral (qualitative):** S = ∫ φ_A φ_B dτ; larger overlap usually → stronger bond (in the simplest picture).
+
+## D) Derivations or Proofs
+- **Why bonding/antibonding form:** Two AO combinations are orthogonal; in-phase increases electron density between nuclei → lower potential energy; out-of-phase creates a node → reduced density between nuclei → higher energy.
+- **Bond order formula reasoning:** Each electron in a bonding MO contributes ~½ to a bond (pair → 1), each in antibonding cancels similarly → BO = (N_b − N_a)/2.
+- **O₂ paramagnetism (MO reasoning):** Filling places two unpaired electrons in π* orbitals → predicts paramagnetism.
+
+## E) Worked Examples
+1. **H₂:** VBT: σ bond from 1s–1s overlap. MOT: σ1s filled → BO=1, diamagnetic.
+2. **He₂:** MOT: σ1s and σ*1s both filled → BO=0 (no stable bond).
+3. **O₂:** MOT: two unpaired e⁻ in π* → BO=2, paramagnetic.
+4. **N₂:** MOT: BO=3, diamagnetic; explains very strong triple bond.
+5. **NO vs NO⁺:** Use electron count; BO changes; predicts bond length/strength trends.
+
+## F) Common Questions & Misconceptions
+- “Is one theory correct and the other wrong?” → Both are approximations; same QM, different representations.
+- “Bond order always equals number of lines in Lewis?” → Often, but not always (delocalization, radicals, ions).
+- “Always use the same MO ordering.” → For lighter diatomics (B₂–N₂) σ2p/π2p ordering differs from O₂–F₂.
+
+## G) Exam Strategy (Short & Focused)
+- If asked **geometry/hybridization/resonance** → start with VBT + Lewis.
+- If asked **magnetism/bond order/diatomic trends** → MO diagram + BO formula.
+- Checklist: count valence e⁻ → choose ordering → fill → compute BO → determine magnetism → compare to bond length/strength.
+
+## H) Summary & Connections
+- VBT = localized bonds; great for structure and “where the bonds are.”
+- MOT = delocalized orbitals; great for magnetism, spectra, and delocalized bonding.
+- Connections: spectroscopy, conjugation/aromaticity, band theory (solids), coordination chemistry.</pre>
+              </div>
+
+              <div class="box equation">
+                <div class="boxtitle"><span class="pill">PART B</span> Study Page Structure (JSON)</div>
+                <pre class="copyable equation-block" data-copy id="exportJSON"></pre>
+              </div>
+            </div>
+          </details>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">Copied</div>
+
+  <script>
+    (function(){
+      const sidebar = document.getElementById('sidebar');
+      const q = document.getElementById('q');
+      const btnClear = document.getElementById('btnClear');
+      const btnToggleSidebar = document.getElementById('btnToggleSidebar');
+      const btnExpandAll = document.getElementById('btnExpandAll');
+      const btnCollapseAll = document.getElementById('btnCollapseAll');
+      const btnPrint = document.getElementById('btnPrint');
+      const tocLinks = Array.from(document.querySelectorAll('[data-toc-link]'));
+      const tocItems = Array.from(document.querySelectorAll('[data-toc-item]'));
+      const sections = Array.from(document.querySelectorAll('details.section'));
+      const toast = document.getElementById('toast');
+
+      function showToast(text){
+        toast.textContent = text;
+        toast.classList.add('show');
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => toast.classList.remove('show'), 1200);
+      }
+
+      function smoothScrollTo(el){
+        const y = el.getBoundingClientRect().top + window.scrollY - 74;
+        window.scrollTo({top:y, behavior:'smooth'});
+      }
+
+      function setActiveLink(hash){
+        tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === hash));
+      }
+
+      function openIfDetails(target){
+        const det = target.closest('details.section');
+        if(det && !det.open) det.open = true;
+      }
+
+      tocLinks.forEach(a => {
+        a.addEventListener('click', (e) => {
+          const href = a.getAttribute('href');
+          if(!href || !href.startsWith('#')) return;
+          const target = document.querySelector(href);
+          if(!target) return;
+          e.preventDefault();
+          openIfDetails(target);
+          setActiveLink(href);
+          history.replaceState(null, '', href);
+          smoothScrollTo(target);
+        });
+      });
+
+      btnToggleSidebar.addEventListener('click', () => {
+        sidebar.classList.toggle('hidden');
+      });
+
+      btnExpandAll.addEventListener('click', () => {
+        sections.forEach(d => d.open = true);
+      });
+
+      btnCollapseAll.addEventListener('click', () => {
+        sections.forEach(d => d.open = false);
+      });
+
+      btnPrint.addEventListener('click', () => window.print());
+
+      function clearHighlights(){
+        document.querySelectorAll('.hl').forEach(el => el.classList.remove('hl'));
+      }
+
+      function applySearch(term){
+        const t = term.trim().toLowerCase();
+        clearHighlights();
+
+        tocItems.forEach(li => li.classList.remove('hidden'));
+
+        if(!t){
+          return;
+        }
+
+        tocItems.forEach(li => {
+          const a = li.querySelector('a');
+          const txt = (a ? a.textContent : '').toLowerCase();
+          if(!txt.includes(t)) li.classList.add('hidden');
+        });
+
+        // highlight matched headings/summaries
+        const candidates = [];
+        sections.forEach(d => {
+          const title = (d.getAttribute('data-title') || '').toLowerCase();
+          const summary = d.querySelector('summary');
+          if(title.includes(t) && summary) candidates.push(summary);
+          d.querySelectorAll('h3,h4').forEach(h => {
+            if((h.textContent || '').toLowerCase().includes(t)) candidates.push(h);
+          });
+        });
+        candidates.forEach(el => el.classList.add('hl'));
+      }
+
+      q.addEventListener('input', () => applySearch(q.value));
+      btnClear.addEventListener('click', () => {
+        q.value = '';
+        applySearch('');
+        q.focus();
+      });
+
+      // Copy on double-click for equation/theorem/formula blocks
+      function fallbackCopy(text){
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly','');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        try{ document.execCommand('copy'); }catch(e){}
+        document.body.removeChild(ta);
+      }
+
+      document.addEventListener('dblclick', async (e) => {
+        const el = e.target.closest('[data-copy]');
+        if(!el) return;
+        const text = (el.innerText || '').trim();
+        if(!text) return;
+        try{
+          await navigator.clipboard.writeText(text);
+          showToast('Copied');
+        }catch(err){
+          fallbackCopy(text);
+          showToast('Copied');
+        }
+      });
+
+      // Set JSON export block from embedded structure
+      const jsonScript = document.getElementById('studyPageStructure');
+      const exportJSON = document.getElementById('exportJSON');
+      if(jsonScript && exportJSON){
+        try{
+          const obj = JSON.parse(jsonScript.textContent);
+          exportJSON.textContent = JSON.stringify(obj, null, 2);
+        }catch(e){
+          exportJSON.textContent = jsonScript.textContent.trim();
+        }
+      }
+
+      // Initial active link
+      if(location.hash){
+        setActiveLink(location.hash);
+      }else{
+        setActiveLink('#origin');
+      }
+
+      // If user navigates via hash manually, open and scroll
+      window.addEventListener('hashchange', () => {
+        const h = location.hash || '#origin';
+        const target = document.querySelector(h);
+        if(target){
+          openIfDetails(target);
+          setActiveLink(h);
+          smoothScrollTo(target);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
