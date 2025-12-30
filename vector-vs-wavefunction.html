@@ -230,7 +230,7 @@
 
             <p>Then the same state vector can be reconstructed in any complete basis:</p>
             <p>
-              \\
+              \\\[
               |\psi\rangle
               =
               \int \psi(x)\,|x\rangle\,dx
@@ -238,7 +238,7 @@
               \int \phi(p)\,|p\rangle\,dp
               =
               \sum_n c_n\,|n\rangle.
-              \\
+              \\\]
             </p>
 
             <p><strong>Not fully representative</strong> examples: incomplete bases, truncations, or keeping only partial information (e.g., only one component).</p>
@@ -272,22 +272,22 @@
 
             <p><strong>Action on a state:</strong></p>
             <p>
-              \\
+              \\\[
               |x\rangle\langle x|\psi\rangle
               =
               |x\rangle\,\psi(x)
               \quad\text{because}\quad
               \langle x|\psi\rangle=\psi(x).
-              \\
+              \\\]
             </p>
 
             <p><strong>Measurement connection:</strong></p>
             <p>
-              \\
+              \\\[
               \langle \psi|\,|x\rangle\langle x|\,|\psi\rangle
               =
               |\psi(x)|^2.
-              \\
+              \\\]
             </p>
 
             <p class="hint">Note: \(|x\rangle\) is a generalized eigenket (not normalizable in the usual sense), so these objects are handled with distributions (Dirac delta) and integrals.</p>
@@ -312,9 +312,9 @@
           <div class="text">
             <p><strong>Yes.</strong> Since \(\psi(x)\) is a complex scalar, it commutes with kets:</p>
             <p>
-              \\
+              \\\[
               |x\rangle\,\psi(x) \;=\; \psi(x)\,|x\rangle.
-              \\
+              \\\]
             </p>
 
             <p><strong>Why:</strong> \(\psi(x)=\langle x|\psi\rangle\) is a <em>number</em>. Scalars can be moved left/right without changing meaning.</p>
@@ -341,64 +341,64 @@
           <div class="text">
             <p>We prove the operator identity</p>
             <p>
-              \\
+              \\\[
               \boxed{\int_{-\infty}^{\infty} |x\rangle\langle x|\,dx \;=\; \mathbf{1}}
-              \\
+              \\\]
             </p>
             <p>by showing both sides act the same on an arbitrary state \(|\psi\rangle\).</p>
 
             <p><strong>Step 1 — Apply LHS to \(|\psi\rangle\):</strong></p>
             <p>
-              \\
+              \\\[
               \left(\int |x\rangle\langle x|\,dx\right)|\psi\rangle
               =
               \int |x\rangle\langle x|\psi\rangle\,dx.
-              \\
+              \\\]
             </p>
 
             <p><strong>Step 2 — Use \(\langle x|\psi\rangle=\psi(x)\):</strong></p>
             <p>
-              \\
+              \\\[
               \int |x\rangle\langle x|\psi\rangle\,dx
               =
               \int |x\rangle\,\psi(x)\,dx.
-              \\
+              \\\]
             </p>
 
             <p>Define \(|\phi\rangle \equiv \int |x\rangle\,\psi(x)\,dx\). To show \(|\phi\rangle=|\psi\rangle\), compare their components in the position basis.</p>
 
             <p><strong>Step 3 — Test with \(\langle y|\):</strong></p>
             <p>
-              \\
+              \\\[
               \langle y|\phi\rangle
               =
               \left\langle y\left|\int |x\rangle\,\psi(x)\,dx\right.\right\rangle
               =
               \int \langle y|x\rangle\,\psi(x)\,dx.
-              \\
+              \\\]
             </p>
 
             <p><strong>Step 4 — Use \(\langle y|x\rangle=\delta(y-x)\):</strong></p>
             <p>
-              \\
+              \\\[
               \langle y|\phi\rangle
               =
               \int \delta(y-x)\,\psi(x)\,dx
               =
               \psi(y).
-              \\
+              \\\]
             </p>
 
             <p>But \(\psi(y)=\langle y|\psi\rangle\). So \(\langle y|\phi\rangle=\langle y|\psi\rangle\) for all \(y\), implying \(|\phi\rangle=|\psi\rangle\).</p>
 
             <p><strong>Conclusion:</strong></p>
             <p>
-              \\
+              \\\[
               \left(\int |x\rangle\langle x|\,dx\right)|\psi\rangle = |\psi\rangle
               \quad\text{for all }|\psi\rangle
               \;\Rightarrow\;
               \int |x\rangle\langle x|\,dx = \mathbf{1}.
-              \\
+              \\\]
             </p>
 
             <p class="hint">
