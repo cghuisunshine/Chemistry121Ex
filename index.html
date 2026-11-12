@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Chemistry 121 — Copy-on-Double-Click</title>
+<link rel="icon" href="data:," />
+<title>Chemistry 111, 121 and 141 — 2024–2025 Contents and Tutorials</title>
 <style>
   :root{
     --bg:#0b1020; --panel:#0f1733; --ink:#e8ecff; --muted:#a9b3d1;
@@ -51,6 +52,14 @@
   ul{margin:.2rem 0 .75rem 1.25rem;padding:0}
   li{margin:.15rem 0}
   .legend{font:12px/1.4 var(--mono); color:var(--muted); margin-top:.5rem}
+  a{color:var(--accent);text-underline-offset:3px}
+  .tutorial-link{display:inline-block;margin-left:.65rem;padding:1px 8px;border:1px solid rgba(139,178,255,.3);border-radius:6px;font-size:.75rem;text-decoration:none;white-space:nowrap;vertical-align:middle}
+  .tutorial-link:hover{background:var(--hover);color:var(--accent2)}
+  a:focus-visible,[data-copyable]:focus-visible{outline:2px solid var(--accent2);outline-offset:4px}
+  li[id]{scroll-margin-top:20px}
+  .intro{max-width:760px;font-size:.95rem}
+  .resource-title{font-size:.85rem;color:var(--accent2)}
+  @media(max-width:600px){#toc-root ul{margin-left:.8rem}.tutorial-link{font-size:.7rem}header h1{font-size:1.65rem}.wrap{padding:18px}}
 
   .toast{
     position:fixed;top:14px;right:14px;background:#0a1b12;color:#d5ffe9;
@@ -64,10 +73,26 @@
 <body>
 <div class="wrap" id="content">
   <header>
-    <h1 data-copyable>📘 Chemistry 121 — Table of Contents</h1>
-    <p class="legend">Tip: <span class="kbd">Double-click</span> any line to copy it.</p>
+    <p class="resource-title">UBC · 2024–2025 Integrated Resource Package</p>
+    <h1 data-copyable>Chemistry 111, 121 and 141</h1>
+    <p>Table of Contents &amp; Chapter Tutorials</p>
+    <p class="intro">Study Chapters 2–12 with explanations, worked examples, and practice questions. Choose <strong>Open tutorial</strong> for a chapter or <strong>Study section</strong> to jump to a topic.</p>
+    <p class="legend">Page numbers refer to the workbook. <span class="kbd">Double-click</span> a contents label (or focus it and press <span class="kbd">Enter</span>) to copy it.</p>
   </header>
-  <section id="toc-root"></section>
+  <section id="toc-root" aria-label="Workbook table of contents"></section>
+  <noscript><p>Open a chapter tutorial:</p><ul>
+    <li><a href="chapter-02.html">2 Chemical Bonding and Lewis Structures</a></li>
+    <li><a href="chapter-03.html">3 Shapes and Polarity of Chemical Species</a></li>
+    <li><a href="chapter-04.html">4 Fundamentals of Quantum Mechanics</a></li>
+    <li><a href="chapter-05.html">5 Electronic Structure of Atoms and Ions</a></li>
+    <li><a href="chapter-06.html">6 Interactions Between Light and Matter</a></li>
+    <li><a href="chapter-07.html">7 Multi-electron Species and Periodic Properties</a></li>
+    <li><a href="chapter-08.html">8 Molecular Orbital Theory</a></li>
+    <li><a href="chapter-09.html">9 Valence Bond Theory</a></li>
+    <li><a href="chapter-10.html">10 Conjugation and Colour</a></li>
+    <li><a href="chapter-11.html">11 Properties of Molecules and Macromolecules</a></li>
+    <li><a href="chapter-12.html">12 Chemistry and Society: Chemicals in Our World</a></li>
+  </ul></noscript>
 </div>
 <div id="toast" class="toast" role="status" aria-live="polite">Copied ✔</div>
 
@@ -257,12 +282,23 @@ function renderTOC(nodes, level=1){
   for(const n of nodes){
     const li=document.createElement('li');
     li.classList.add(`lvl-${level}`);
+    const sectionNumber=n.title.match(/^\d+(?:\.\d+)*/)?.[0];
+    const chapter=Number(sectionNumber?.split('.')[0]);
+    if(sectionNumber) li.id=level===1 ? `chapter-${chapter}` : `toc-${sectionNumber.replaceAll('.','-')}`;
     const label=document.createElement('span');
     label.dataset.copyable='';
     label.setAttribute('tabindex','0');
     label.setAttribute('title','Double-click to copy');
     label.textContent=`${n.title} (page ${n.page})`;
     li.appendChild(label);
+    if(chapter>=2 && chapter<=12){
+      const link=document.createElement('a');
+      link.className='tutorial-link';
+      link.href=`chapter-${String(chapter).padStart(2,'0')}.html`+(level===1 ? '' : `#sec-${sectionNumber.replaceAll('.','-')}`);
+      link.textContent=level===1 ? 'Open tutorial →' : 'Study section →';
+      link.setAttribute('aria-label',`${level===1 ? 'Open tutorial' : 'Study section'}: ${n.title}`);
+      li.appendChild(link);
+    }
     if(n.children?.length) li.appendChild(renderTOC(n.children, level+1));
     ul.appendChild(li);
   }
@@ -276,6 +312,7 @@ tocRoot.innerHTML='<hr />'; tocRoot.appendChild(renderTOC(tree)); tocRoot.append
 (function(){
   const container=document.getElementById('content');
   const toast=document.getElementById('toast');
+  let toastTimer;
 
   container.addEventListener('dblclick', async (ev)=>{
     const target=ev.target.closest('[data-copyable]');
@@ -287,7 +324,7 @@ tocRoot.innerHTML='<hr />'; tocRoot.appendChild(renderTOC(tree)); tocRoot.append
     target.classList.add('copied');setTimeout(()=>target.classList.remove('copied'),650);
     toast.textContent='Copied ✔';toast.style.display='block';toast.style.opacity='0';toast.style.transform='translateY(-6px)';
     requestAnimationFrame(()=>{toast.style.transition='opacity .18s ease,transform .18s ease';toast.style.opacity='1';toast.style.transform='translateY(0)';});
-    clearTimeout(showToast?._t);showToast={_t:setTimeout(()=>{toast.style.opacity='0';toast.style.transform='translateY(-6px)';setTimeout(()=>{toast.style.display='none';},200);},1100)};
+    clearTimeout(toastTimer);toastTimer=setTimeout(()=>{toast.style.opacity='0';toast.style.transform='translateY(-6px)';setTimeout(()=>{toast.style.display='none';},200);},1100);
   },{passive:true});
 
   container.addEventListener('keydown',(ev)=>{
