@@ -7,9 +7,10 @@
 <title>Chemistry 111, 121 and 141 — 2024–2025 Contents and Tutorials</title>
 <style>
   :root{
-    --bg:#0b1020; --panel:#0f1733; --ink:#e8ecff; --muted:#a9b3d1;
-    --accent:#8bb2ff; --accent2:#6ee7b7;
-    --ring: rgba(139,178,255,.25); --hover: rgba(139,178,255,.08); --copied: rgba(110,231,183,.18);
+    color-scheme:light;
+    --bg:#faf9f5; --panel:#fff; --ink:#182e3c; --muted:#526875;
+    --accent:#086b72; --accent2:#086b72; --line:#dce4e7;
+    --ring:rgba(8,107,114,.15); --hover:#edf6f4; --copied:#edf6f4;
     --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
     --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans";
   }
@@ -18,56 +19,56 @@
   html,body{height:100%}
   body{
     margin:0; color:var(--ink);
-    background: radial-gradient(1200px 800px at 10% -10%, #1b2452 0%, #0b1020 40%, #050815 100%);
-    font-family:var(--sans); line-height:1.5;
+    background:var(--bg);
+    font-family:var(--sans); font-size:17px; line-height:1.7;
   }
 
   .wrap{
-    max-width:1100px; margin:clamp(16px,3vw,32px) auto;
-    padding:clamp(16px,3vw,32px);
-    background:color-mix(in oklab, var(--panel) 92%, black 8%);
-    border:1px solid rgba(255,255,255,.06);
-    border-radius:16px;
-    box-shadow:0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.04);
+    max-width:1220px; margin:22px auto 60px;
+    padding:30px;
   }
 
-  header h1{margin:0 0 8px; font-size:clamp(22px, 3.2vw, 36px); letter-spacing:.2px}
+  header{padding:22px 0 28px}
+  header h1{margin:12px 0 20px; font-size:clamp(36px, 4.6vw, 58px); line-height:1.08; letter-spacing:-.045em}
   header p{margin:.25rem 0 1rem; color:var(--muted)}
-  hr{border:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);margin:20px 0;}
+  hr{border:0;height:1px;background:var(--line);margin:20px 0;}
+  #toc-root > ul{list-style:none;margin:24px 0;padding:0}
+  #toc-root > ul > li{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px 32px;margin:0 0 24px}
+  #toc-root > ul > li > ul{margin-top:18px}
 
   [data-copyable]{
     position:relative;border-radius:10px;padding:.15rem .4rem;margin-left:-.4rem;margin-right:-.4rem;
     transition:background .12s ease,box-shadow .12s ease,transform .05s ease;cursor:copy;
   }
   [data-copyable]:hover{background:var(--hover);box-shadow:0 0 0 3px var(--ring);}
-  [data-copyable].copied{background:var(--copied);outline:2px solid rgba(110,231,183,.5);}
+  [data-copyable].copied{background:var(--copied);outline:2px solid var(--accent);}
 
   /* Level-based colors */
-  #toc-root .lvl-1 > [data-copyable]{color:var(--accent); font-weight:600; font-size:1.05rem;}
-  #toc-root .lvl-2 > [data-copyable]{color:var(--accent2);}
+  #toc-root .lvl-1 > [data-copyable]{color:var(--ink); font-weight:700; font-size:1.3rem;letter-spacing:-.025em;}
+  #toc-root .lvl-2 > [data-copyable]{color:var(--accent);}
   #toc-root .lvl-3 > [data-copyable],
   #toc-root .lvl-4 > [data-copyable],
   #toc-root .lvl-5 > [data-copyable]{color:var(--ink);}
 
   ul{margin:.2rem 0 .75rem 1.25rem;padding:0}
-  li{margin:.15rem 0}
+  li{margin:.4rem 0}
   .legend{font:12px/1.4 var(--mono); color:var(--muted); margin-top:.5rem}
   a{color:var(--accent);text-underline-offset:3px}
-  .tutorial-link{display:inline-block;margin-left:.65rem;padding:1px 8px;border:1px solid rgba(139,178,255,.3);border-radius:6px;font-size:.75rem;text-decoration:none;white-space:nowrap;vertical-align:middle}
+  .tutorial-link{display:inline-block;margin-left:.65rem;padding:2px 9px;border:1px solid var(--line);background:var(--panel);border-radius:8px;font-size:.75rem;text-decoration:none;white-space:nowrap;vertical-align:middle}
   .tutorial-link:hover{background:var(--hover);color:var(--accent2)}
-  a:focus-visible,[data-copyable]:focus-visible{outline:2px solid var(--accent2);outline-offset:4px}
+  a:focus-visible,[data-copyable]:focus-visible{outline:3px solid #087cff;outline-offset:4px}
   li[id]{scroll-margin-top:20px}
   .intro{max-width:760px;font-size:.95rem}
-  .resource-title{font-size:.85rem;color:var(--accent2)}
-  @media(max-width:600px){#toc-root ul{margin-left:.8rem}.tutorial-link{font-size:.7rem}header h1{font-size:1.65rem}.wrap{padding:18px}}
+  .resource-title{font-size:12px;letter-spacing:.15em;text-transform:uppercase;font-weight:750;color:var(--accent)}
+  @media(max-width:600px){#toc-root ul{margin-left:.8rem}#toc-root > ul{margin-left:0}#toc-root > ul > li{padding:24px 20px}.tutorial-link{font-size:.7rem}header h1{font-size:36px}.wrap{padding:18px}}
 
   .toast{
-    position:fixed;top:14px;right:14px;background:#0a1b12;color:#d5ffe9;
-    border:1px solid rgba(110,231,183,.4);padding:10px 12px;border-radius:10px;
-    font-size:14px;display:none;box-shadow:0 10px 24px rgba(0,0,0,.35);
+    position:fixed;top:14px;right:14px;background:var(--hover);color:var(--accent);
+    border:1px solid #cdddd4;padding:10px 12px;border-radius:10px;
+    font-size:14px;display:none;box-shadow:0 10px 24px #182e3c18;
   }
-  .kbd{font:11px/1 var(--mono);background:rgba(255,255,255,.08);
-       padding:2px 6px;border-radius:6px;border:1px solid rgba(255,255,255,.14);}
+  .kbd{font:11px/1 var(--mono);background:#e9eeec;
+       padding:2px 6px;border-radius:6px;border:1px solid var(--line);}
 </style>
 </head>
 <body>
